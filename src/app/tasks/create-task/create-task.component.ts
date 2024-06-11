@@ -2,6 +2,7 @@ import { Component, Output } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 import { Task } from '../task.model';
 import { FormsModule } from '@angular/forms';
+import { TaskService } from '../task.service';
 
 @Component({
   selector: 'app-create-task',
@@ -11,10 +12,11 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './create-task.component.scss'
 })
 export class CreateTaskComponent {
-  @Output() taskCreated = new EventEmitter<any>();
+
+  constructor(private taskService: TaskService) {}
 
   onCreateTask(taskTitleInput: HTMLInputElement, taskDescriptionInput: HTMLInputElement, taskStatusInput: HTMLInputElement) {
-    this.taskCreated.emit(
+    this.taskService.taskCreated.emit(
       new Task(taskTitleInput.value, taskDescriptionInput.value, new Date(), taskStatusInput.value));
   }
 }
