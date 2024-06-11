@@ -10,9 +10,11 @@
                     <input type="text" id="title" name="title" #taskTitle><br>
                     <label for="description">Task description</label><br>
                     <input type="text" id="description" name="description" #taskDescription><br>
+                    <label for="type">Task type</label><br>
+                    <input type="text" id="type" name="type" #taskType><br>
                     <label for="status">Task Status</label><br>
                     <input type="text" id="status" name="status" #taskStatus><br>
-                    <input class="pull-right" type="button" (click)="onCreateTask(taskTitle, taskDescription, taskStatus)" value="Submit">
+                    <input class="pull-right" type="button" (click)="onCreateTask(taskTitle, taskDescription, taskType, taskStatus)" value="Submit">
                 </form>
             </div>
         </div> 

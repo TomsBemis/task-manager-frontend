@@ -14,10 +14,16 @@ export class CreateTaskComponent {
 
   constructor(private taskService: TaskService) {}
 
-  onCreateTask(taskTitleInput: HTMLInputElement, taskDescriptionInput: HTMLInputElement, taskStatusInput: HTMLInputElement) {
+  onCreateTask(taskTitleInput: HTMLInputElement, taskDescriptionInput: HTMLInputElement, taskTypeInput: HTMLInputElement, taskStatusInput: HTMLInputElement) {
     // Use references on input elements to get the filled out form data
     this.taskService.taskCreated.emit(
-      new Task(taskTitleInput.value, taskDescriptionInput.value, new Date(), taskStatusInput.value));
+      new Task(
+        taskTitleInput.value, 
+        taskDescriptionInput.value, 
+        taskTypeInput.value, 
+        new Date(), 
+        taskStatusInput.value
+      ));
   }
 }
 

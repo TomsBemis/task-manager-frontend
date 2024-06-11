@@ -20,6 +20,7 @@ export class TaskService {
             this.tasks.push(new Task(
                 taskElementData.title, 
                 taskElementData.description, 
+                taskElementData.type,
                 new Date(taskElementData.createdOn),
                 taskElementData.status
             ));
