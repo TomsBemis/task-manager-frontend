@@ -15,7 +15,7 @@
                 <p class="list-group-item-text">{{ task.description }}</p>
             </div>
             <div class="col-3">
-                <button class="btn btn-danger pull-right">Delete</button>
+                <button class="btn btn-danger pull-right" (click)="onDeleted(task.title)">Delete</button>
             </div>
         </div>
     </div>

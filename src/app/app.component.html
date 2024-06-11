@@ -1,12 +1,7 @@
 <main>
   <section class="content">
     <div class="container">
-      <div class="row">
-        <div class="col-xs-12">
-          <app-create-task (taskCreated)="onTaskCreated($any($event))"></app-create-task>
-          <app-task-list [taskList]="tasks"></app-task-list>
-        </div>
-      </div>
+      <app-tasks></app-tasks>
     </div>
   </section>
 </main>
