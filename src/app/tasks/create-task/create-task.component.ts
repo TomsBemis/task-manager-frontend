@@ -1,5 +1,4 @@
-import { Component, Output } from '@angular/core';
-import { EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import { Task } from '../task.model';
 import { FormsModule } from '@angular/forms';
 import { TaskService } from '../task.service';
@@ -16,6 +15,7 @@ export class CreateTaskComponent {
   constructor(private taskService: TaskService) {}
 
   onCreateTask(taskTitleInput: HTMLInputElement, taskDescriptionInput: HTMLInputElement, taskStatusInput: HTMLInputElement) {
+    // Use references on input elements to get the filled out form data
     this.taskService.taskCreated.emit(
       new Task(taskTitleInput.value, taskDescriptionInput.value, new Date(), taskStatusInput.value));
   }

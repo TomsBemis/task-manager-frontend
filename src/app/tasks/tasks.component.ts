@@ -23,18 +23,19 @@ export class TasksComponent implements OnInit {
 
   constructor(private taskService: TaskService) {}
 
+  // Load task data and subscribe to events
   ngOnInit(): void {
     this.tasks = this.taskService.getTasks();
     this.taskService.taskCreated.subscribe(
       (task: Task) => {
         this.taskService.addTask(task);
-        this.tasks = this.taskService.getTasks();
+        this.tasks = this.taskService.getTasks(); // Reload task data after changes
       }
     );
     this.taskService.taskDeleted.subscribe(
       (taskTitle: string) => {
         this.taskService.deleteTask(taskTitle);
-        this.tasks = this.taskService.getTasks();
+        this.tasks = this.taskService.getTasks(); // Reload task data after changes
       }
     );
   }
