@@ -3,6 +3,7 @@ import { CreateTaskComponent } from './create-task/create-task.component';
 import { TaskListComponent } from './task-list/task-list.component';
 import { Task } from './task.model';
 import { TaskService } from './task.service';
+import { TaskList } from './task-list.model';
 
 @Component({
   selector: 'app-tasks',
@@ -19,23 +20,23 @@ import { TaskService } from './task.service';
 })
 export class TasksComponent implements OnInit {
 
-  tasks: Task[] = [];
+  taskList: TaskList | undefined;
 
   constructor(private taskService: TaskService) {}
 
   // Load task data and subscribe to events
   ngOnInit(): void {
-    this.tasks = this.taskService.getTasks();
+    this.taskList = this.taskService.getTasks();
     this.taskService.taskCreated.subscribe(
       (task: Task) => {
         this.taskService.addTask(task);
-        this.tasks = this.taskService.getTasks(); // Reload task data after changes
+        this.taskList = this.taskService.getTasks(); // Reload task data after changes
       }
     );
     this.taskService.taskDeleted.subscribe(
       (taskTitle: string) => {
         this.taskService.deleteTask(taskTitle);
-        this.tasks = this.taskService.getTasks(); // Reload task data after changes
+        this.taskList = this.taskService.getTasks(); // Reload task data after changes
       }
     );
   }

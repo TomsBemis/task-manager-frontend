@@ -1,13 +1,14 @@
 import { EventEmitter } from "@angular/core";
 import { Task } from "./task.model";
 import taskData from '../../assets/tasks.json';
+import { TaskList } from "./task-list.model";
 
 export class TaskService {
 
     taskCreated = new EventEmitter<Task>();
     taskDeleted = new EventEmitter<string>();
     
-    private tasks: Task[] = [];
+    private taskList: TaskList | undefined;
 
     constructor() {
         this.loadTaskData();
@@ -15,9 +16,11 @@ export class TaskService {
 
     private loadTaskData(){
 
+        let taskArray: Task[] = [];
+
         // JSON data needs to be parsed because of complex objects like Date
         taskData.forEach(taskElementData => {
-            this.tasks.push(new Task(
+            taskArray.push(new Task(
                 taskElementData.title, 
                 taskElementData.description, 
                 taskElementData.type,
@@ -25,21 +28,25 @@ export class TaskService {
                 taskElementData.status
             ));
         });
+        
+        this.taskList = new TaskList(taskArray);
     }
 
     public getTasks() {
-        return this.tasks.slice();  // Return a copy of the private array
+        return this.taskList;
     }
 
     public addTask(task: Task) {
-        this.tasks.push(task);
+        this.taskList?.tasks.push(task);
     }
 
     public deleteTask(taskTitle: string) {
         // Task title is it's unique identifier (needs validation on creation)
-        for (let index = 0; index < this.tasks.length; index++) {
-            const task = this.tasks[index];
-            if (task.title === taskTitle) this.tasks.splice(index, 1);
+        if (this.taskList?.tasks != undefined) {
+            for (let index = 0; index < this.taskList.tasks.length; index++) {
+                const task = this.taskList.tasks[index];
+                if (task.title === taskTitle) this.taskList.tasks.splice(index, 1);
+            }
         }
     }
 }

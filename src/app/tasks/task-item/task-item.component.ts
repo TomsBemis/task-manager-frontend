@@ -11,7 +11,7 @@ import { TaskService } from '../task.service';
 })
 export class TaskItemComponent {
 
-  @Input('taskElement') task!: Task;
+  @Input() taskItem!: Task;
   
   constructor(private taskService: TaskService) {}
 

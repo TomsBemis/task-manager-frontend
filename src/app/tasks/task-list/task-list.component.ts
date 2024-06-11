@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Task } from '../task.model';
 import { TaskItemComponent } from '../task-item/task-item.component';
+import { TaskList } from '../task-list.model';
 
 @Component({
   selector: 'app-task-list',
@@ -13,7 +14,7 @@ import { TaskItemComponent } from '../task-item/task-item.component';
 })
 export class TaskListComponent {
 
-  @Input('taskList') tasks!: Task[];
+  @Input() taskList!: TaskList|undefined;
 
   constructor() {}
 
