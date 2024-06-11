@@ -7,12 +7,12 @@
             <div class="panel-body">
                 <form action="/task" method="post">
                     <label for="title">Task title</label><br>
-                    <input type="text" id="title" name="title" [(ngModel)]="newTitle"><br>
+                    <input type="text" id="title" name="title" #taskTitle><br>
                     <label for="description">Task description</label><br>
-                    <input type="text" id="description" name="description" [(ngModel)]="newDescription"><br>
+                    <input type="text" id="description" name="description" #taskDescription><br>
                     <label for="status">Task Status</label><br>
-                    <input type="text" id="status" name="status" [(ngModel)]="newStatus"><br>
-                    <input class="pull-right" type="button" (click)="onCreateTask()" value="Submit">
+                    <input type="text" id="status" name="status" #taskStatus><br>
+                    <input class="pull-right" type="button" (click)="onCreateTask(taskTitle, taskDescription, taskStatus)" value="Submit">
                 </form>
             </div>
         </div> 

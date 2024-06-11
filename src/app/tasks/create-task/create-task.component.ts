@@ -13,13 +13,9 @@ import { FormsModule } from '@angular/forms';
 export class CreateTaskComponent {
   @Output() taskCreated = new EventEmitter<any>();
 
-  newTitle: string = '';
-  newDescription: string = '';
-  newStatus: string = '';
-
-  onCreateTask() {
+  onCreateTask(taskTitleInput: HTMLInputElement, taskDescriptionInput: HTMLInputElement, taskStatusInput: HTMLInputElement) {
     this.taskCreated.emit(
-      new Task(this.newTitle, this.newDescription, new Date(), this.newStatus));
+      new Task(taskTitleInput.value, taskDescriptionInput.value, new Date(), taskStatusInput.value));
   }
 }
 
