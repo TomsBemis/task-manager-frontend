@@ -7,7 +7,7 @@
                 </div>
             </a>
             <div class="col-3">
-                <span class="pull-right">{{ taskItem.createdOn }}</span>
+                <span class="pull-right">{{ taskItem.createdOn.toDateString() }}</span>
             </div>
         </div>
         <div class="row">
@@ -15,7 +15,7 @@
                 <p class="list-group-item-text">{{ taskItem.description }}</p>
             </div>
             <div class="col-3">
-                <button class="btn btn-danger pull-right" (click)="onDeleted(taskItem.title)">Delete</button>
+                <button class="btn btn-danger pull-right" (click)="onDeleted()">Delete</button>
             </div>
         </div>
     </div>

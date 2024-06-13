@@ -1,6 +1,9 @@
 import { Task } from "./task.model";
 
-export class TaskList {
+export interface TaskList {
+    tasks: Task[];
+}
+export class TaskListModel implements TaskList {
     constructor(
         public tasks: Task[]
     ) {}

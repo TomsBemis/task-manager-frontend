@@ -1,6 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { Task } from '../task.model';
-import { TaskService } from '../task.service';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { TaskModel } from '../task.model';
 
 @Component({
   selector: 'app-task-item',
@@ -11,11 +10,11 @@ import { TaskService } from '../task.service';
 })
 export class TaskItemComponent {
 
-  @Input() taskItem!: Task;
-  
-  constructor(private taskService: TaskService) {}
+  @Output() taskDeletedEvent = new EventEmitter<void>();
 
-  onDeleted(taskTitle: string) {
-    this.taskService.taskDeleted.emit(taskTitle);
+  @Input() taskItem: TaskModel;
+
+  onDeleted() {
+    this.taskDeletedEvent.emit();
   }
 }

@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CreateTaskComponent } from './create-task/create-task.component';
 import { TaskListComponent } from './task-list/task-list.component';
-import { Task } from './task.model';
+import { TaskModel } from './task.model';
 import { TaskService } from './task.service';
-import { TaskList } from './task-list.model';
+import { TaskListModel } from './task-list.model';
 
 @Component({
   selector: 'app-tasks',
@@ -20,24 +20,17 @@ import { TaskList } from './task-list.model';
 })
 export class TasksComponent implements OnInit {
 
-  taskList: TaskList | undefined;
+  taskList: TaskListModel;
 
   constructor(private taskService: TaskService) {}
 
   // Load task data and subscribe to events
   ngOnInit(): void {
     this.taskList = this.taskService.getTasks();
-    this.taskService.taskCreated.subscribe(
-      (task: Task) => {
-        this.taskService.addTask(task);
-        this.taskList = this.taskService.getTasks(); // Reload task data after changes
-      }
-    );
-    this.taskService.taskDeleted.subscribe(
-      (taskTitle: string) => {
-        this.taskService.deleteTask(taskTitle);
-        this.taskList = this.taskService.getTasks(); // Reload task data after changes
-      }
-    );
+  }
+
+  createTask(task: TaskModel) {
+    this.taskService.addTask(task);
+    this.taskList = this.taskService.getTasks(); // Reload task data after changes
   }
 }
