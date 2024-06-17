@@ -4,6 +4,6 @@ export interface TaskList {
     tasks: Task[]
 }
 
-export let emptyTaskList: TaskList = {
+export const emptyTaskList: TaskList = {
     tasks: []
 };

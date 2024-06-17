@@ -6,7 +6,7 @@ export interface Task {
     status: string
 }
 
-export let emptyTask: Task = {
+export const emptyTask: Task = {
     title: '',
     description: '',
     type: '',

@@ -8,11 +8,11 @@
                 <form [formGroup]="createTaskForm" (ngSubmit)="onSubmit()">
                     <label for="title">Task title</label><br>
                     <input type="text" id="title" name="title" formControlName="title"><br>
-                    @if (createTaskForm.get('title')!.errors) {
-                        @if (createTaskForm.get('title')!.errors!['required'] && createTaskForm.get('title')!.touched) {
+                    @if (createTaskForm.get('title')?.errors) {
+                        @if (createTaskForm.get('title')?.errors!['required'] && createTaskForm.get('title')?.touched) {
                             <span class="help-block">Title is required</span>
                         }
-                        @if (createTaskForm.get('title')!.errors!['titleUnique']) {
+                        @if (createTaskForm.get('title')?.errors!['titleUnique']) {
                             <span class="help-block">Title already exists</span>
                         }
                     }
@@ -20,12 +20,12 @@
                     <input type="text" id="description" name="description" formControlName="description"><br>
                     <label for="type">Task type</label><br>
                     <input type="text" id="type" name="type" formControlName="type"><br>
-                    @if (!createTaskForm.get('type')!.valid && createTaskForm.get('type')!.touched) {
+                    @if (!createTaskForm.get('type')?.valid && createTaskForm.get('type')?.touched) {
                         <span class="help-block">Type is required</span>
                     }
                     <label for="status">Task Status</label><br>
                     <input type="text" id="status" name="status" formControlName="status"><br>
-                    @if (!createTaskForm.get('status')!.valid && createTaskForm.get('status')!.touched) {
+                    @if (!createTaskForm.get('status')?.valid && createTaskForm.get('status')?.touched) {
                         <span class="help-block">Status is required</span>
                     }
                     <input [disabled]="!createTaskForm.valid" class="pull-right btn btn-primary" type="submit">
