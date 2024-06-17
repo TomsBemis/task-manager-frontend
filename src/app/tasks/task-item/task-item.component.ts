@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { TaskModel } from '../task.model';
+import { Task, emptyTask } from '../task.model';
 
 @Component({
   selector: 'app-task-item',
@@ -12,7 +12,7 @@ export class TaskItemComponent {
 
   @Output() taskDeletedEvent = new EventEmitter<void>();
 
-  @Input() taskItem: TaskModel;
+  @Input() taskItem: Task = emptyTask;
 
   onDeleted() {
     this.taskDeletedEvent.emit();

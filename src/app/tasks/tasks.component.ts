@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CreateTaskComponent } from './create-task/create-task.component';
 import { TaskListComponent } from './task-list/task-list.component';
-import { TaskModel } from './task.model';
+import { Task } from './task.model';
 import { TaskService } from './task.service';
-import { TaskListModel } from './task-list.model';
+import { TaskList, emptyTaskList } from './task-list.model';
 
 @Component({
   selector: 'app-tasks',
@@ -20,7 +20,7 @@ import { TaskListModel } from './task-list.model';
 })
 export class TasksComponent implements OnInit {
 
-  taskList: TaskListModel;
+  taskList: TaskList = emptyTaskList;
 
   constructor(private taskService: TaskService) {}
 
@@ -29,7 +29,7 @@ export class TasksComponent implements OnInit {
     this.taskList = this.taskService.getTasks();
   }
 
-  createTask(task: TaskModel) {
+  createTask(task: Task) {
     this.taskService.addTask(task);
     this.taskList = this.taskService.getTasks(); // Reload task data after changes
   }

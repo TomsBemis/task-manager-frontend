@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { TaskItemComponent } from '../task-item/task-item.component';
-import { TaskList } from '../task-list.model';
+import { TaskList, emptyTaskList } from '../task-list.model';
 import { TaskService } from '../task.service';
 
 @Component({
@@ -14,7 +14,7 @@ import { TaskService } from '../task.service';
 })
 export class TaskListComponent {
 
-  @Input() taskList: TaskList;
+  @Input() taskList: TaskList = emptyTaskList;
 
   constructor(private taskService: TaskService) {}
 

@@ -5,7 +5,7 @@
                 Tasks
             </div>
             <div class="panel-body">
-                @for (task of taskList?.tasks; track task) {
+                @for (task of taskList.tasks; track task) {
                     <app-task-item 
                     (taskDeletedEvent)="onDeleted(task.title)" 
                     [taskItem]="task"

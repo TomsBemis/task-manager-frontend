@@ -6,12 +6,10 @@ export interface Task {
     status: string
 }
 
-export class TaskModel implements Task {
-    constructor(
-        public title: string, 
-        public description: string, 
-        public type: string, 
-        public createdOn: Date, 
-        public status: string
-    ) {}
+export let emptyTask: Task = {
+    title: '',
+    description: '',
+    type: '',
+    createdOn: new Date(),
+    status: ''
 }

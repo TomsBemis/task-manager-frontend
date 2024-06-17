@@ -1,11 +1,10 @@
-import { EventEmitter } from "@angular/core";
-import { TaskModel } from "./task.model";
+import { Task } from "./task.model";
 import taskData from '../../assets/tasks.json';
-import { TaskListModel } from "./task-list.model";
+import { TaskList, emptyTaskList } from "./task-list.model";
 
 export class TaskService {
     
-    private taskList: TaskListModel;
+    private taskList: TaskList = emptyTaskList;
 
     constructor() {
         this.loadTaskData();
@@ -13,27 +12,27 @@ export class TaskService {
 
     private loadTaskData(){
 
-        let taskArray: TaskModel[] = [];
+        let taskArray: Task[] = [];
 
         // JSON data needs to be parsed because of complex objects like Date
         taskData.forEach(taskElementData => {
-            taskArray.push(new TaskModel(
-                taskElementData.title, 
-                taskElementData.description, 
-                taskElementData.type,
-                new Date(taskElementData.createdOn),
-                taskElementData.status
-            ));
+            taskArray.push({
+                title: taskElementData.title,
+                description: taskElementData.description,
+                type: taskElementData.type,
+                createdOn: new Date(taskElementData.createdOn),
+                status: taskElementData.status
+            });
         });
         
-        this.taskList = new TaskListModel(taskArray);
+        this.taskList.tasks = taskArray;
     }
 
     public getTasks() {
         return this.taskList;
     }
 
-    public addTask(task: TaskModel) {
+    public addTask(task: Task) {
         this.taskList?.tasks.push(task);
     }
 
