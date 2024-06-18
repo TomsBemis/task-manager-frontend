@@ -1,21 +1,26 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { Task } from '../task.model';
+import { Task, TaskStatus, TaskType } from '../task.model';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TaskService } from '../task.service';
 import { Validators } from '@angular/forms';
+import { KeyValuePipe } from '@angular/common';
 
 @Component({
   selector: 'app-create-task',
   standalone: true,
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    KeyValuePipe
   ],
   templateUrl: './create-task.component.html',
   styleUrl: './create-task.component.scss'
 })
 export class CreateTaskComponent {
-  
+ 
   @Output() taskCreatedEvent = new EventEmitter<Task>();
+
+  taskTypes : {key: string, value: string}[] = [];
+  taskStatuses : {key: string, value: string}[] = [];
 
   createTaskForm: FormGroup = new FormGroup({
     title: new FormControl(null, [
@@ -25,10 +30,25 @@ export class CreateTaskComponent {
     description: new FormControl(),
     type: new FormControl(null, Validators.required),
     createdOn: new FormControl(new Date().toDateString()),
-    status: new FormControl('In Progress', Validators.required)
+    status: new FormControl(null, Validators.required)
   });
 
-  constructor(private taskService: TaskService) {}
+  constructor(private taskService: TaskService) {
+    // Map the task type enum to array of keys and values
+    Object.keys(TaskType).forEach(taskTypeKey => {
+      this.taskTypes.push({
+        key : taskTypeKey, 
+        value : TaskType[taskTypeKey as keyof typeof TaskType]
+      });
+    });
+    // Map the task status enum to array of keys and values
+    Object.keys(TaskStatus).forEach(taskStatusKey => {
+      this.taskStatuses.push({
+        key : taskStatusKey, 
+        value : TaskStatus[taskStatusKey as keyof typeof TaskStatus]
+      });
+    });
+  }
 
   onSubmit () {
 
@@ -36,9 +56,9 @@ export class CreateTaskComponent {
     this.taskCreatedEvent.emit({
       title: this.createTaskForm.get('title')?.value,
       description: this.createTaskForm.get('description')?.value,
-      type: this.createTaskForm.get('type')?.value,
+      type: TaskType[this.createTaskForm.get('type')?.value as keyof typeof TaskType],
       createdOn: new Date(),
-      status: this.createTaskForm.get('status')?.value
+      status: TaskStatus[this.createTaskForm.get('status')?.value as keyof typeof TaskStatus]
     });
 
     this.createTaskForm.reset();

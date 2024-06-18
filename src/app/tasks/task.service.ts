@@ -1,4 +1,4 @@
-import { Task } from "./task.model";
+import { Task, TaskStatus, TaskType } from "./task.model";
 import taskData from '../../assets/tasks.json';
 import { TaskList, emptyTaskList } from "./task-list.model";
 
@@ -19,9 +19,9 @@ export class TaskService {
             taskArray.push({
                 title: taskElementData.title,
                 description: taskElementData.description,
-                type: taskElementData.type,
+                type: TaskType[taskElementData.type as keyof typeof TaskType],
                 createdOn: new Date(taskElementData.createdOn),
-                status: taskElementData.status
+                status: TaskStatus[taskElementData.status as keyof typeof TaskStatus]
             });
         });
         
