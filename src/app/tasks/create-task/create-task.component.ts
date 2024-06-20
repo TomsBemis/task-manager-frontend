@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output, Input } from '@angular/core';
-import { Task, Option, OptionIndex } from '../task.model';
+import { Task, Option } from '../task.model';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskService } from '../task.service';
 import { KeyValuePipe } from '@angular/common';
@@ -46,15 +46,21 @@ export class CreateTaskComponent implements OnInit{
   }
 
   onSubmit () {
-
+        
+    var taskType: Option | undefined = this.taskTypes.find(
+      taskType => taskType.value == this.createTaskForm.get('type')?.value
+    );
+    var taskStatus: Option | undefined = this.taskStatuses.find(
+      taskStatus => taskStatus.value == this.createTaskForm.get('status')?.value
+    );
 
     // Get filled out form data using form group
     this.taskCreatedEvent.emit({
       title: this.createTaskForm.get('title')?.value,
       description: this.createTaskForm.get('description')?.value,
-      type: this.taskService.getTaskTypes()[this.createTaskForm.get('type')?.value],
+      type: taskType!,
       createdOn: new Date(),
-      status: this.taskService.getTaskStatuses()[this.createTaskForm.get('status')?.value],
+      status: taskStatus!,
     });
 
     this.createTaskForm.reset();

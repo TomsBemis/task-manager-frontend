@@ -1,4 +1,4 @@
-import { Task, OptionIndex } from "./task.model";
+import { Task, Option } from "./task.model";
 import taskData from '../../assets/tasks.json';
 import { TaskList, emptyTaskList } from "./task-list.model";
 
@@ -6,9 +6,9 @@ export class TaskService {
     
     private taskList: TaskList = emptyTaskList;
     
-    private taskTypes: OptionIndex = {};
+    private taskTypes: Option[] = [];
     
-    private taskStatuses: OptionIndex = {};
+    private taskStatuses: Option[] = [];
 
     constructor() {
         this.loadTaskData();
@@ -20,28 +20,35 @@ export class TaskService {
 
         // Load task types
         taskData.taskTypes.forEach(taskType => {
-            this.taskTypes[taskType.value] = {
+            this.taskTypes.push({
                 value: taskType.value,
                 displayName: taskType.displayName
-            };
+            });
         });
 
         // Load task statuses
         taskData.taskStatuses.forEach(taskStatus => {
-            this.taskStatuses[taskStatus.value] = {
+            this.taskStatuses.push({
                 value: taskStatus.value,
                 displayName: taskStatus.displayName
-            };
+            });
         });
+
+        var taskType: Option | undefined;
+        var taskStatus: Option | undefined;
         
         // Load tasks
         taskData.tasks.forEach(taskElementData => {
+
+            taskType = this.taskTypes.find(taskType => taskType.value == taskElementData.type);
+            taskStatus = this.taskStatuses.find(taskStatus => taskStatus.value == taskElementData.status);
+            
             taskArray.push({
                 title: taskElementData.title,
                 description: taskElementData.description,
-                type: this.taskTypes[taskElementData.type],
+                type: taskType!,
                 createdOn: new Date(taskElementData.createdOn),
-                status: this.taskStatuses[taskElementData.status]
+                status: taskStatus!
             });
         });
         

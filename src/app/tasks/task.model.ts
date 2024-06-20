@@ -4,10 +4,6 @@ export type Option = {
     displayName: string
 }
 
-export interface OptionIndex {
-    [key: string]: Option
-}
-
 export interface Task {
     title: string, 
     description: string, 
