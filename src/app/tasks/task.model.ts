@@ -1,15 +1,21 @@
+// Data structure used for TaskType and TaskStatus attributes
+export type Option = {
+    value: string,
+    displayName: string
+}
+
 export interface Task {
     title: string, 
     description: string, 
-    type: string, 
+    type: Option | null, 
     createdOn: Date, 
-    status: string
+    status: Option | null
 }
 
 export const emptyTask: Task = {
     title: '',
     description: '',
-    type: '',
+    type: null,
     createdOn: new Date(),
-    status: ''
+    status: null
 }

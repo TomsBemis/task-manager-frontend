@@ -18,10 +18,6 @@ export class TaskListComponent {
 
   constructor(private taskService: TaskService) {}
 
-  ngOnInit() {
-    
-  }
-
   onDeleted(taskTitle: string) {
     this.taskService.deleteTask(taskTitle);
     this.taskList = this.taskService.getTasks(); // Reload task data after changes

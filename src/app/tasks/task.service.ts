@@ -1,10 +1,14 @@
-import { Task } from "./task.model";
+import { Task, Option } from "./task.model";
 import taskData from '../../assets/tasks.json';
 import { TaskList, emptyTaskList } from "./task-list.model";
 
 export class TaskService {
     
     private taskList: TaskList = emptyTaskList;
+    
+    private taskTypes: Option[] = taskData.taskTypes;
+    
+    private taskStatuses: Option[] = taskData.taskStatuses;
 
     constructor() {
         this.loadTaskData();
@@ -13,15 +17,15 @@ export class TaskService {
     private loadTaskData(){
 
         let taskArray: Task[] = [];
-
-        // JSON data needs to be parsed because of complex objects like Date
-        taskData.forEach(taskElementData => {
+        
+        // Load tasks
+        taskData.tasks.forEach(taskElementData => {
             taskArray.push({
                 title: taskElementData.title,
                 description: taskElementData.description,
-                type: taskElementData.type,
+                type: this.taskTypes.find(taskType => taskType.value == taskElementData.type) ?? null,
                 createdOn: new Date(taskElementData.createdOn),
-                status: taskElementData.status
+                status: this.taskStatuses.find(taskStatus => taskStatus.value == taskElementData.status) ?? null
             });
         });
         
@@ -44,5 +48,13 @@ export class TaskService {
                 if (task.title === taskTitle) this.taskList.tasks.splice(index, 1);
             }
         }
+    }
+
+    public getTaskTypes() {
+        return this.taskTypes;
+    }
+
+    public getTaskStatuses() {
+        return this.taskStatuses;
     }
 }

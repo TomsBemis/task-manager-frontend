@@ -17,4 +17,6 @@ export class TaskItemComponent {
   onDeleted() {
     this.taskDeletedEvent.emit();
   }
+
+
 }
