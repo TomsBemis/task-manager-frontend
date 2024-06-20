@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, Input } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { Task, Option } from '../task.model';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskService } from '../task.service';
@@ -18,9 +18,9 @@ export class CreateTaskComponent {
  
   @Output() taskCreatedEvent = new EventEmitter<Task>();
 
-  @Input() taskTypes : Option[] = this.taskService.getTaskTypes();
+  taskTypes : Option[] = this.taskService.getTaskTypes();
 
-  @Input() taskStatuses : Option[] = this.taskService.getTaskStatuses();
+  taskStatuses : Option[] = this.taskService.getTaskStatuses();
 
   createTaskForm: FormGroup = new FormGroup({
     title: new FormControl(null, [
