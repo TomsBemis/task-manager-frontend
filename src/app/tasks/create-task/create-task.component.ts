@@ -1,8 +1,7 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { Task, TaskStatus, TaskType } from '../task.model';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component, EventEmitter, OnInit, Output, Input } from '@angular/core';
+import { Task, Option, OptionIndex } from '../task.model';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskService } from '../task.service';
-import { Validators } from '@angular/forms';
 import { KeyValuePipe } from '@angular/common';
 
 @Component({
@@ -15,12 +14,13 @@ import { KeyValuePipe } from '@angular/common';
   templateUrl: './create-task.component.html',
   styleUrl: './create-task.component.scss'
 })
-export class CreateTaskComponent {
+export class CreateTaskComponent implements OnInit{
  
   @Output() taskCreatedEvent = new EventEmitter<Task>();
 
-  taskTypes : {key: string, value: string}[] = [];
-  taskStatuses : {key: string, value: string}[] = [];
+  @Input() taskTypes : Option[] = [];
+
+  @Input() taskStatuses : Option[] = [];
 
   createTaskForm: FormGroup = new FormGroup({
     title: new FormControl(null, [
@@ -29,36 +29,32 @@ export class CreateTaskComponent {
     ]), //Custom validator for unique title
     description: new FormControl(),
     type: new FormControl(null, Validators.required),
-    createdOn: new FormControl(new Date().toDateString()),
     status: new FormControl(null, Validators.required)
   });
 
-  constructor(private taskService: TaskService) {
-    // Map the task type enum to array of keys and values
-    Object.keys(TaskType).forEach(taskTypeKey => {
-      this.taskTypes.push({
-        key : taskTypeKey, 
-        value : TaskType[taskTypeKey as keyof typeof TaskType]
-      });
+  constructor(private taskService: TaskService) {}
+
+  ngOnInit(): void {
+
+    // Map task types and statuses from index to arrays
+    Object.entries(this.taskService.getTaskTypes()).forEach(taskType => {
+      this.taskTypes.push(taskType[1]);
     });
-    // Map the task status enum to array of keys and values
-    Object.keys(TaskStatus).forEach(taskStatusKey => {
-      this.taskStatuses.push({
-        key : taskStatusKey, 
-        value : TaskStatus[taskStatusKey as keyof typeof TaskStatus]
-      });
+    Object.entries(this.taskService.getTaskStatuses()).forEach(taskStatus => {
+      this.taskStatuses.push(taskStatus[1]);
     });
   }
 
   onSubmit () {
 
+
     // Get filled out form data using form group
     this.taskCreatedEvent.emit({
       title: this.createTaskForm.get('title')?.value,
       description: this.createTaskForm.get('description')?.value,
-      type: TaskType[this.createTaskForm.get('type')?.value as keyof typeof TaskType],
+      type: this.taskService.getTaskTypes()[this.createTaskForm.get('type')?.value],
       createdOn: new Date(),
-      status: TaskStatus[this.createTaskForm.get('status')?.value as keyof typeof TaskStatus]
+      status: this.taskService.getTaskStatuses()[this.createTaskForm.get('status')?.value],
     });
 
     this.createTaskForm.reset();

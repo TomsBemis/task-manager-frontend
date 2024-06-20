@@ -31,7 +31,7 @@
                         <div class="col-sm-10">
                             <select class="form-control form-select" name="type" id="type" formControlName="type">
                                 @for (taskType of taskTypes; track taskType) {
-                                    <option [value]="taskType.key">{{taskType.value}}</option>
+                                    <option [value]="taskType.value">{{taskType.displayName}}</option>
                                 }
                             </select>
                             @if (!createTaskForm.get('type')?.valid && createTaskForm.get('type')?.touched) {
@@ -44,7 +44,7 @@
                       <div class="col-sm-10">
                         <select class="form-control form-select" name="status" id="status" formControlName="status">
                             @for (taskStatus of taskStatuses; track taskStatus) {
-                                <option [value]="taskStatus.key">{{taskStatus.value}}</option>
+                                <option [value]="taskStatus.value">{{taskStatus.displayName}}</option>
                             }
                         </select>
                         @if (!createTaskForm.get('status')?.valid && createTaskForm.get('status')?.touched) {

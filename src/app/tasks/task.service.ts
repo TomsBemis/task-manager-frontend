@@ -1,10 +1,14 @@
-import { Task, TaskStatus, TaskType } from "./task.model";
+import { Task, OptionIndex } from "./task.model";
 import taskData from '../../assets/tasks.json';
 import { TaskList, emptyTaskList } from "./task-list.model";
 
 export class TaskService {
     
     private taskList: TaskList = emptyTaskList;
+    
+    private taskTypes: OptionIndex = {};
+    
+    private taskStatuses: OptionIndex = {};
 
     constructor() {
         this.loadTaskData();
@@ -14,14 +18,30 @@ export class TaskService {
 
         let taskArray: Task[] = [];
 
-        // JSON data needs to be parsed because of complex objects like Date
-        taskData.forEach(taskElementData => {
+        // Load task types
+        taskData.taskTypes.forEach(taskType => {
+            this.taskTypes[taskType.value] = {
+                value: taskType.value,
+                displayName: taskType.displayName
+            };
+        });
+
+        // Load task statuses
+        taskData.taskStatuses.forEach(taskStatus => {
+            this.taskStatuses[taskStatus.value] = {
+                value: taskStatus.value,
+                displayName: taskStatus.displayName
+            };
+        });
+        
+        // Load tasks
+        taskData.tasks.forEach(taskElementData => {
             taskArray.push({
                 title: taskElementData.title,
                 description: taskElementData.description,
-                type: TaskType[taskElementData.type as keyof typeof TaskType],
+                type: this.taskTypes[taskElementData.type],
                 createdOn: new Date(taskElementData.createdOn),
-                status: TaskStatus[taskElementData.status as keyof typeof TaskStatus]
+                status: this.taskStatuses[taskElementData.status]
             });
         });
         
@@ -44,5 +64,13 @@ export class TaskService {
                 if (task.title === taskTitle) this.taskList.tasks.splice(index, 1);
             }
         }
+    }
+
+    public getTaskTypes() {
+        return this.taskTypes;
+    }
+
+    public getTaskStatuses() {
+        return this.taskStatuses;
     }
 }

@@ -1,22 +1,19 @@
-export enum TaskType {
-    STORY = "Story",
-    TASK = "Task",
-    SUBTASK = "Subtask"
+// Data structure used for TaskType and TaskStatus attributes
+export type Option = {
+    value: string,
+    displayName: string
 }
 
-export enum TaskStatus {
-    IN_PROGRESS = "In Progress",
-    FIX_IN_DEV = "Fix in dev",
-    OBSOLETE = "Obsolete",
-    DONE = "Done"
+export interface OptionIndex {
+    [key: string]: Option
 }
 
 export interface Task {
     title: string, 
     description: string, 
-    type: TaskType | null, 
+    type: Option | null, 
     createdOn: Date, 
-    status: TaskStatus | null
+    status: Option | null
 }
 
 export const emptyTask: Task = {
