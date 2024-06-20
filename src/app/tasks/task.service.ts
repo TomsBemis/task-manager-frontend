@@ -6,9 +6,9 @@ export class TaskService {
     
     private taskList: TaskList = emptyTaskList;
     
-    private taskTypes: Option[] = [];
+    private taskTypes: Option[] = taskData.taskTypes;
     
-    private taskStatuses: Option[] = [];
+    private taskStatuses: Option[] = taskData.taskStatuses;
 
     constructor() {
         this.loadTaskData();
@@ -17,38 +17,15 @@ export class TaskService {
     private loadTaskData(){
 
         let taskArray: Task[] = [];
-
-        // Load task types
-        taskData.taskTypes.forEach(taskType => {
-            this.taskTypes.push({
-                value: taskType.value,
-                displayName: taskType.displayName
-            });
-        });
-
-        // Load task statuses
-        taskData.taskStatuses.forEach(taskStatus => {
-            this.taskStatuses.push({
-                value: taskStatus.value,
-                displayName: taskStatus.displayName
-            });
-        });
-
-        var taskType: Option | undefined;
-        var taskStatus: Option | undefined;
         
         // Load tasks
         taskData.tasks.forEach(taskElementData => {
-
-            taskType = this.taskTypes.find(taskType => taskType.value == taskElementData.type);
-            taskStatus = this.taskStatuses.find(taskStatus => taskStatus.value == taskElementData.status);
-            
             taskArray.push({
                 title: taskElementData.title,
                 description: taskElementData.description,
-                type: taskType!,
+                type: this.taskTypes.find(taskType => taskType.value == taskElementData.type) ?? null,
                 createdOn: new Date(taskElementData.createdOn),
-                status: taskStatus!
+                status: this.taskStatuses.find(taskStatus => taskStatus.value == taskElementData.status) ?? null
             });
         });
         

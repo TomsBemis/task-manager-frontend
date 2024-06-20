@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output, Input } from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { Task, Option } from '../task.model';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskService } from '../task.service';
@@ -14,13 +14,13 @@ import { KeyValuePipe } from '@angular/common';
   templateUrl: './create-task.component.html',
   styleUrl: './create-task.component.scss'
 })
-export class CreateTaskComponent implements OnInit{
+export class CreateTaskComponent {
  
   @Output() taskCreatedEvent = new EventEmitter<Task>();
 
-  @Input() taskTypes : Option[] = [];
+  @Input() taskTypes : Option[] = this.taskService.getTaskTypes();
 
-  @Input() taskStatuses : Option[] = [];
+  @Input() taskStatuses : Option[] = this.taskService.getTaskStatuses();
 
   createTaskForm: FormGroup = new FormGroup({
     title: new FormControl(null, [
@@ -34,33 +34,19 @@ export class CreateTaskComponent implements OnInit{
 
   constructor(private taskService: TaskService) {}
 
-  ngOnInit(): void {
-
-    // Map task types and statuses from index to arrays
-    Object.entries(this.taskService.getTaskTypes()).forEach(taskType => {
-      this.taskTypes.push(taskType[1]);
-    });
-    Object.entries(this.taskService.getTaskStatuses()).forEach(taskStatus => {
-      this.taskStatuses.push(taskStatus[1]);
-    });
-  }
-
   onSubmit () {
-        
-    var taskType: Option | undefined = this.taskTypes.find(
-      taskType => taskType.value == this.createTaskForm.get('type')?.value
-    );
-    var taskStatus: Option | undefined = this.taskStatuses.find(
-      taskStatus => taskStatus.value == this.createTaskForm.get('status')?.value
-    );
 
     // Get filled out form data using form group
     this.taskCreatedEvent.emit({
       title: this.createTaskForm.get('title')?.value,
       description: this.createTaskForm.get('description')?.value,
-      type: taskType!,
+      type: this.taskTypes.find( taskType => 
+        taskType.value == this.createTaskForm.get('type')?.value
+      ) ?? null,
       createdOn: new Date(),
-      status: taskStatus!,
+      status: this.taskStatuses.find(taskStatus => 
+        taskStatus.value == this.createTaskForm.get('status')?.value
+      ) ?? null,
     });
 
     this.createTaskForm.reset();
