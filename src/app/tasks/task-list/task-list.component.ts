@@ -2,12 +2,14 @@ import { Component, Input } from '@angular/core';
 import { TaskItemComponent } from '../task-item/task-item.component';
 import { TaskList, emptyTaskList } from '../task-list.model';
 import { TaskService } from '../task.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
   imports: [
-    TaskItemComponent
+    TaskItemComponent,
+    RouterLink
   ],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
@@ -18,8 +20,8 @@ export class TaskListComponent {
 
   constructor(private taskService: TaskService) {}
 
-  onDeleted(taskTitle: string) {
-    this.taskService.deleteTask(taskTitle);
+  onDeleted(taskId: number) {
+    this.taskService.deleteTask(taskId);
     this.taskList = this.taskService.getTasks(); // Reload task data after changes
   }
 }

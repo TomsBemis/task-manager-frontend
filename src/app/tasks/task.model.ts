@@ -5,6 +5,7 @@ export type Option = {
 }
 
 export interface Task {
+    id: number | null,
     title: string, 
     description: string, 
     type: Option | null, 
@@ -13,6 +14,7 @@ export interface Task {
 }
 
 export const emptyTask: Task = {
+    id: null,
     title: '',
     description: '',
     type: null,

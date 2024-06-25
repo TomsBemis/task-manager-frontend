@@ -1,7 +1,10 @@
 import { Task, Option } from "./task.model";
 import taskData from '../../assets/tasks.json';
 import { TaskList, emptyTaskList } from "./task-list.model";
+import { IdGeneratorService } from "./id-generator-service";
+import { Injectable } from "@angular/core";
 
+@Injectable()
 export class TaskService {
     
     private taskList: TaskList = emptyTaskList;
@@ -10,7 +13,7 @@ export class TaskService {
     
     private taskStatuses: Option[] = taskData.taskStatuses;
 
-    constructor() {
+    constructor(private idGeneratorService: IdGeneratorService) {
         this.loadTaskData();
     }
 
@@ -21,6 +24,7 @@ export class TaskService {
         // Load tasks
         taskData.tasks.forEach(taskElementData => {
             taskArray.push({
+                id: this.idGeneratorService.generateId(),
                 title: taskElementData.title,
                 description: taskElementData.description,
                 type: this.taskTypes.find(taskType => taskType.value == taskElementData.type) ?? null,
@@ -36,16 +40,26 @@ export class TaskService {
         return this.taskList;
     }
 
+    public getTask(taskId: number): Task | null {
+        return this.taskList?.tasks?.find(task => {
+            return task.id == taskId;
+        }) ?? null;
+    }
+
     public addTask(task: Task) {
+        task.id = this.idGeneratorService.generateId();
         this.taskList?.tasks.push(task);
     }
 
-    public deleteTask(taskTitle: string) {
+    public deleteTask(taskId: number) {
         // Task title is it's unique identifier (needs validation on creation)
         if (this.taskList?.tasks != undefined) {
             for (let index = 0; index < this.taskList.tasks.length; index++) {
                 const task = this.taskList.tasks[index];
-                if (task.title === taskTitle) this.taskList.tasks.splice(index, 1);
+                if (task.id === taskId) {
+                    this.taskList.tasks.splice(index, 1);
+                    break;
+                }
             }
         }
     }
