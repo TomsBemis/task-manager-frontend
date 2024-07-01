@@ -1,21 +1,13 @@
-<div class="row list-group-item">
-    <div class="col">
-        <div class="row">
-            <a href="#" class="clearfix">
-                <div class="col-3 pull-left">
-                    <h4 class="list-group-item-heading">{{ taskItem.title }} ({{taskItem.type?.displayName}}) </h4>
-                </div>
+<div class="col">
+    <div class="row">
+        <div class="col-11">
+            <a [routerLink]="['/tasks', taskItem.id ]" class="clearfix text-decoration-none">
+                <h5 class="list-group-item-heading">{{ taskItem.title }} ({{taskItem.type?.displayName}}) </h5>
             </a>
-            <div class="col-3">
-                <span class="pull-right">{{ taskItem.createdOn.toDateString() }}</span>
-            </div>
         </div>
-        <div class="row">
-            <div class="col-9">
-                <p class="list-group-item-text">{{ taskItem.description }}</p>
-            </div>
-            <div class="col-3">
-                <button class="btn btn-danger pull-right" (click)="onDeleted()">Delete</button>
+        <div class="col-1">
+            <div class="col-1">
+                <button class="btn btn-danger" (click)="onDeleted()">Delete</button>
             </div>
         </div>
     </div>

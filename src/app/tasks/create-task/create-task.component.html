@@ -1,64 +1,57 @@
 <div class="row">
     <div class="col-xs-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Create new task
-            </div>
-            <div class="panel-body">
-                <form [formGroup]="createTaskForm" (ngSubmit)="onSubmit()">
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label" for="title">Task title</label>
-                        <div class="col-sm-10">
-                            <input class="form-control" type="text" id="title" name="title" formControlName="title">
-                            @if (createTaskForm.get('title')?.errors) {
-                                @if (createTaskForm.get('title')?.errors?.['required'] && createTaskForm.get('title')?.touched) {
-                                    <span class="pull-right help-block">Title is required</span>
-                                }
-                                @if (createTaskForm.get('title')?.errors?.['titleUnique']) {
-                                    <span class="pull-right help-block">Title already exists</span>
-                                }
-                            }
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label" for="description">Task description</label>
-                        <div class="col-sm-10">
-                            <input class="form-control" type="text" id="description" name="description" formControlName="description">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label" for="type">Task type</label>
-                        <div class="col-sm-10">
-                            <select class="form-control form-select" name="type" id="type" formControlName="type">
-                                @for (taskType of taskTypes; track taskType) {
-                                    <option [value]="taskType.value">{{taskType.displayName}}</option>
-                                }
-                            </select>
-                            @if (!createTaskForm.get('type')?.valid && createTaskForm.get('type')?.touched) {
-                                <span class="pull-right help-block">Type is required</span>
-                            }
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                    <label class="col-sm-2 col-form-label" for="status">Task status</label>
-                      <div class="col-sm-10">
-                        <select class="form-control form-select" name="status" id="status" formControlName="status">
-                            @for (taskStatus of taskStatuses; track taskStatus) {
-                                <option [value]="taskStatus.value">{{taskStatus.displayName}}</option>
-                            }
-                        </select>
-                        @if (!createTaskForm.get('status')?.valid && createTaskForm.get('status')?.touched) {
-                            <span class="pull-right help-block">Status is required</span>
+        <form [formGroup]="createTaskForm" (ngSubmit)="onSubmit()">
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label" for="title">Task title</label>
+                <div class="col-sm-10">
+                    <input class="form-control" type="text" id="title" name="title" formControlName="title">
+                    @if (createTaskForm.get('title')?.errors) {
+                        @if (createTaskForm.get('title')?.errors?.['required'] && createTaskForm.get('title')?.touched) {
+                            <span class="pull-right help-block">Title is required</span>
                         }
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-12">                        
-                            <input class="form-control" [disabled]="!createTaskForm.valid" class="pull-right btn btn-primary" type="submit">
-                        </div>
-                    </div>
-                </form>
+                        @if (createTaskForm.get('title')?.errors?.['titleUnique']) {
+                            <span class="pull-right help-block">Title already exists</span>
+                        }
+                    }
+                </div>
             </div>
-        </div> 
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label" for="description">Task description</label>
+                <div class="col-sm-10">
+                    <input class="form-control" type="text" id="description" name="description" formControlName="description">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label" for="type">Task type</label>
+                <div class="col-sm-10">
+                    <select class="form-control form-select" name="type" id="type" formControlName="type">
+                        @for (taskType of taskTypes; track taskType) {
+                            <option [value]="taskType.value">{{taskType.displayName}}</option>
+                        }
+                    </select>
+                    @if (!createTaskForm.get('type')?.valid && createTaskForm.get('type')?.touched) {
+                        <span class="pull-right help-block">Type is required</span>
+                    }
+                </div>
+            </div>
+            <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="status">Task status</label>
+              <div class="col-sm-10">
+                <select class="form-control form-select" name="status" id="status" formControlName="status">
+                    @for (taskStatus of taskStatuses; track taskStatus) {
+                        <option [value]="taskStatus.value">{{taskStatus.displayName}}</option>
+                    }
+                </select>
+                @if (!createTaskForm.get('status')?.valid && createTaskForm.get('status')?.touched) {
+                    <span class="pull-right help-block">Status is required</span>
+                }
+              </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-12">                        
+                    <input class="form-control" [disabled]="!createTaskForm.valid" class="btn btn-primary" type="submit">
+                </div>
+            </div>
+        </form>
     </div>
 </div>

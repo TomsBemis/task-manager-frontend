@@ -1,36 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { CreateTaskComponent } from './create-task/create-task.component';
-import { TaskListComponent } from './task-list/task-list.component';
-import { Task } from './task.model';
+import { Component } from '@angular/core';
 import { TaskService } from './task.service';
-import { TaskList, emptyTaskList } from './task-list.model';
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { NavComponent } from '../shared/nav/nav.component';
+import { IdGeneratorService } from './id-generator-service';
 
 @Component({
   selector: 'app-tasks',
   standalone: true,
   imports: [
-    CreateTaskComponent,
-    TaskListComponent
+    RouterOutlet, 
+    RouterLink, 
+    RouterLinkActive,
+    NavComponent
   ],
   providers: [
-    TaskService
+    TaskService,
+    IdGeneratorService
   ],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.scss'
 })
-export class TasksComponent implements OnInit {
-
-  taskList: TaskList = emptyTaskList;
-
-  constructor(private taskService: TaskService) {}
-
-  // Load task data and subscribe to events
-  ngOnInit(): void {
-    this.taskList = this.taskService.getTasks();
-  }
-
-  createTask(task: Task) {
-    this.taskService.addTask(task);
-    this.taskList = this.taskService.getTasks(); // Reload task data after changes
-  }
+export class TasksComponent {
 }

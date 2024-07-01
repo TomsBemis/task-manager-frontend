@@ -1,0 +1,22 @@
+<div class="col">
+    <div class="row">
+        <div class="col-3">
+            <h4 class="list-group-item-heading">{{ task?.title }} ({{task?.type?.displayName}}) </h4>
+        </div>
+        <div class="col-11">
+            <p class="list-group-item-text">{{ task?.description }}</p>
+        </div>
+        <div class="col-1">
+            <div class="col-1">
+                <button class="btn btn-danger" 
+                (click)="this.task !== null && this.task.id !== null ? onDeleted(this.task.id) : true">
+                Delete</button>
+            </div>
+        </div>
+    </div>
+    <div class="row d-flex flex-row-reverse">
+        <div class="col">
+            <span>{{ task?.createdOn?.toDateString() }}</span>
+        </div>
+    </div>
+</div>

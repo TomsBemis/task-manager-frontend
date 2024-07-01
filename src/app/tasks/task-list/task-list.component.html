@@ -1,17 +1,10 @@
-<div class="row">
-    <div class="col-xs-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Tasks
-            </div>
-            <div class="panel-body">
-                @for (task of taskList.tasks; track task) {
-                    <app-task-item 
-                    (taskDeletedEvent)="onDeleted(task.title)" 
-                    [taskItem]="task"
-                    ></app-task-item>
-                }
-            </div>
-        </div>
-    </div>
-</div>
+<ul class="list-group">
+    @for (task of taskList.tasks; track task) {
+        <li class="list-group-item">
+            <app-task-item 
+            (taskDeletedEvent)="onDeleted(task.id!)" 
+            [taskItem]="task"
+            ></app-task-item>
+        </li>
+    }
+</ul>

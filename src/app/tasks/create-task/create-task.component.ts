@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { Task, Option } from '../task.model';
+import { Component } from '@angular/core';
+import { Option } from '../task.model';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskService } from '../task.service';
 import { KeyValuePipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-task',
@@ -15,8 +16,6 @@ import { KeyValuePipe } from '@angular/common';
   styleUrl: './create-task.component.scss'
 })
 export class CreateTaskComponent {
- 
-  @Output() taskCreatedEvent = new EventEmitter<Task>();
 
   taskTypes : Option[] = this.taskService.getTaskTypes();
 
@@ -32,12 +31,13 @@ export class CreateTaskComponent {
     status: new FormControl(null, Validators.required)
   });
 
-  constructor(private taskService: TaskService) {}
+  constructor(private taskService: TaskService, private router: Router) {}
 
   onSubmit () {
 
     // Get filled out form data using form group
-    this.taskCreatedEvent.emit({
+    this.taskService.addTask({
+      id: 0,
       title: this.createTaskForm.get('title')?.value,
       description: this.createTaskForm.get('description')?.value,
       type: this.taskTypes.find( taskType => 
@@ -49,7 +49,7 @@ export class CreateTaskComponent {
       ) ?? null,
     });
 
-    this.createTaskForm.reset();
+    this.router.navigate(['tasks']);
   }
 
   validateTitleUnique(control: FormControl): {[s: string]: boolean} | null {
