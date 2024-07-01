@@ -14,10 +14,8 @@ export class TaskDetailsComponent implements OnInit {
 
   task: Task | null = null;
 
-  onDeleted() {
-    if(this.task !== null && this.task.id !== null) {
-      this.taskService.deleteTask(this.task.id);
-    }
+  onDeleted(taskId: number) {
+    this.taskService.deleteTask(taskId);
     this.router.navigate(['tasks']);
   }
 

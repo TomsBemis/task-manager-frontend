@@ -8,7 +8,9 @@
         </div>
         <div class="col-1">
             <div class="col-1">
-                <button class="btn btn-danger" (click)="onDeleted()">Delete</button>
+                <button class="btn btn-danger" 
+                (click)="this.task !== null && this.task.id !== null ? onDeleted(this.task.id) : true">
+                Delete</button>
             </div>
         </div>
     </div>

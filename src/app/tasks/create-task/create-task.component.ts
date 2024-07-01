@@ -37,7 +37,7 @@ export class CreateTaskComponent {
 
     // Get filled out form data using form group
     this.taskService.addTask({
-      id: null,
+      id: 0,
       title: this.createTaskForm.get('title')?.value,
       description: this.createTaskForm.get('description')?.value,
       type: this.taskTypes.find( taskType => 
