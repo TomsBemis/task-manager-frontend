@@ -37,7 +37,7 @@ export class TaskService {
     }
 
     public getTasks() {
-        return this.taskList;
+        return {tasks: this.taskList.tasks.slice()};
     }
 
     public getTask(taskId: number): Task | null {
@@ -49,6 +49,19 @@ export class TaskService {
     public addTask(task: Task) {
         task.id = this.idGeneratorService.generateId();
         this.taskList?.tasks.push(task);
+    }
+
+    public updateTask(id: number, editedTask: Task) : Task{
+
+        // Find the edited task by id, remove it then push it back into the list
+        
+        this.taskList.tasks.splice(
+            this.taskList.tasks
+            .findIndex(task => task.id === id ), 1);
+            
+        this.taskList.tasks.push(editedTask);
+
+        return editedTask;
     }
 
     public deleteTask(taskId: number) {
