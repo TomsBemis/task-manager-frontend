@@ -41,21 +41,23 @@ export class TaskDetailsComponent implements OnInit {
   onSubmit () {
     // Get filled out form data using form group
 
-    this.task = this.taskService.updateTask(
-      this.task.id ?? 0,
-      {
-        id: 0,
-        title: this.editTaskForm.get('title')?.value,
-        description: this.editTaskForm.get('description')?.value,
-        type: this.taskTypes.find( taskType => 
-          taskType.value == this.editTaskForm.get('type')?.value
-        ) ?? null,
-        createdOn: new Date(),
-        status: this.taskStatuses.find(taskStatus => 
-          taskStatus.value == this.editTaskForm.get('status')?.value
-        ) ?? null,
-      }
-    );
+    if(this.task.id) {
+      this.task = this.taskService.updateTask(
+        this.task.id,
+        {
+          id: this.task.id,
+          title: this.editTaskForm.get('title')?.value,
+          description: this.editTaskForm.get('description')?.value,
+          type: this.taskTypes.find( taskType => 
+            taskType.value == this.editTaskForm.get('type')?.value
+          ) ?? null,
+          createdOn: new Date(),
+          status: this.taskStatuses.find(taskStatus => 
+            taskStatus.value == this.editTaskForm.get('status')?.value
+          ) ?? null,
+        }
+      );
+    }
 
     this.router.navigate(['tasks']);
   }
