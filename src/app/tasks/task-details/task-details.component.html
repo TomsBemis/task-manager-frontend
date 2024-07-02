@@ -10,7 +10,7 @@
                                 </div>
                                 <div class="col">
                                     @if (editMode != true) {
-                                        <button class="btn btn-secondary" (click)="onEdit()">Edit</button>
+                                        <button class="btn btn-secondary" (click)="toggleEditMode()">Edit</button>
                                     }
                                     @else {
                                         <input class="form-control" [disabled]="!editTaskForm.valid" class="btn btn-primary" type="submit" value="Save">

@@ -53,7 +53,7 @@ export class TaskService {
         this.taskList?.tasks.push(task);
     }
 
-    public updateTask(id: number, editedTask: Task) : Task{
+    public updateTask(id: number, editedTask: Task){
 
         // Update the task if the ids match
 
@@ -61,8 +61,6 @@ export class TaskService {
             if(task.id === id) task = editedTask;
             return task
         })
-
-        return editedTask;
     }
 
     public deleteTask(taskId: number) {

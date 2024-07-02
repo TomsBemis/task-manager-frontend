@@ -23,7 +23,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   taskTypes : Option[] = this.taskService.getTaskTypes();
   taskStatuses : Option[] = this.taskService.getTaskStatuses();
   routeParamsSubscription: Subscription = this.route.params.subscribe((params: Params) => {
-    this.task = this.taskService.getTask(+params['id']);
+    this.task = this.taskService.getTask(params['id']);
   });
 
   editTaskForm: FormGroup = new FormGroup({
@@ -38,15 +38,15 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     this.router.navigate(['tasks']);
   }
 
-  onEdit() {
-    this.editMode = true;
+  toggleEditMode() {
+    this.editMode = !this.editMode;
   }
   
   onSubmit () {
     // Get filled out form data using form group
 
     if(this.task?.id) {
-      this.task = this.taskService.updateTask(
+      this.taskService.updateTask(
         this.task.id,
         {
           id: this.task.id,
