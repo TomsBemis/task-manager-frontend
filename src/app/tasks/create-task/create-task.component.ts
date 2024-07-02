@@ -34,7 +34,6 @@ export class CreateTaskComponent {
   constructor(private taskService: TaskService, private router: Router) {}
 
   onSubmit () {
-
     // Get filled out form data using form group
     this.taskService.addTask({
       id: 0,
@@ -43,6 +42,7 @@ export class CreateTaskComponent {
       type: this.taskTypes.find( taskType => 
         taskType.value == this.createTaskForm.get('type')?.value
       ) ?? null,
+      modifiedOn: new Date(),
       createdOn: new Date(),
       status: this.taskStatuses.find(taskStatus => 
         taskStatus.value == this.createTaskForm.get('status')?.value
