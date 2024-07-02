@@ -42,7 +42,7 @@ export class CreateTaskComponent {
       type: this.taskTypes.find( taskType => 
         taskType.value == this.createTaskForm.get('type')?.value
       ) ?? null,
-      modiefiedOn: new Date(),
+      modifiedOn: new Date(),
       createdOn: new Date(),
       status: this.taskStatuses.find(taskStatus => 
         taskStatus.value == this.createTaskForm.get('status')?.value

@@ -55,7 +55,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
           type: this.taskTypes.find( taskType => 
             taskType.value == this.editTaskForm.get('type')?.value
           ) ?? null,
-          modiefiedOn: new Date(),
+          modifiedOn: new Date(),
           createdOn: this.task.createdOn,
           status: this.taskStatuses.find(taskStatus => 
             taskStatus.value == this.editTaskForm.get('status')?.value

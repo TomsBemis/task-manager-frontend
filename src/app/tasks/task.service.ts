@@ -30,7 +30,7 @@ export class TaskService {
                 description: taskElementData.description,
                 type: this.taskTypes.find(taskType => taskType.value == taskElementData.type) ?? null,
                 createdOn: new Date(taskElementData.createdOn),
-                modiefiedOn: new Date(taskElementData.modifiedOn),
+                modifiedOn: new Date(taskElementData.modifiedOn),
                 status: this.taskStatuses.find(taskStatus => taskStatus.value == taskElementData.status) ?? null
             });
         });
