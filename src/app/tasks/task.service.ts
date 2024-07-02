@@ -3,6 +3,7 @@ import taskData from '../../assets/tasks.json';
 import { TaskList, emptyTaskList } from "./task-list.model";
 import { IdGeneratorService } from "./id-generator-service";
 import { Injectable } from "@angular/core";
+import { map } from "rxjs/operators";
 
 @Injectable()
 export class TaskService {
@@ -29,6 +30,7 @@ export class TaskService {
                 description: taskElementData.description,
                 type: this.taskTypes.find(taskType => taskType.value == taskElementData.type) ?? null,
                 createdOn: new Date(taskElementData.createdOn),
+                modiefiedOn: new Date(taskElementData.modifiedOn),
                 status: this.taskStatuses.find(taskStatus => taskStatus.value == taskElementData.status) ?? null
             });
         });
@@ -53,13 +55,12 @@ export class TaskService {
 
     public updateTask(id: number, editedTask: Task) : Task{
 
-        // Find the edited task by id, remove it then push it back into the list
-        
-        this.taskList.tasks.splice(
-            this.taskList.tasks
-            .findIndex(task => task.id === id ), 1);
-            
-        this.taskList.tasks.push(editedTask);
+        // Update the task if the ids match
+
+        this.taskList.tasks = this.taskList.tasks.map((task: Task) => {
+            if(task.id === id) task = editedTask;
+            return task
+        })
 
         return editedTask;
     }

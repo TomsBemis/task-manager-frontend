@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Task, Option, emptyTask } from '../task.model';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { TaskService } from '../task.service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { KeyValuePipe } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-task-details',
@@ -15,12 +16,15 @@ import { KeyValuePipe } from '@angular/common';
   templateUrl: './task-details.component.html',
   styleUrl: './task-details.component.scss'
 })
-export class TaskDetailsComponent implements OnInit {
+export class TaskDetailsComponent implements OnInit, OnDestroy {
 
-  task: Task = emptyTask;
+  task: Task | null = emptyTask;
   editMode: boolean = false;
   taskTypes : Option[] = this.taskService.getTaskTypes();
   taskStatuses : Option[] = this.taskService.getTaskStatuses();
+  routeParamsSubscription: Subscription = this.route.params.subscribe((params: Params) => {
+    this.task = this.taskService.getTask(+params['id']);
+  });
 
   editTaskForm: FormGroup = new FormGroup({
     title: new FormControl(),
@@ -41,7 +45,7 @@ export class TaskDetailsComponent implements OnInit {
   onSubmit () {
     // Get filled out form data using form group
 
-    if(this.task.id) {
+    if(this.task?.id) {
       this.task = this.taskService.updateTask(
         this.task.id,
         {
@@ -51,7 +55,8 @@ export class TaskDetailsComponent implements OnInit {
           type: this.taskTypes.find( taskType => 
             taskType.value == this.editTaskForm.get('type')?.value
           ) ?? null,
-          createdOn: new Date(),
+          modiefiedOn: new Date(),
+          createdOn: this.task.createdOn,
           status: this.taskStatuses.find(taskStatus => 
             taskStatus.value == this.editTaskForm.get('status')?.value
           ) ?? null,
@@ -63,11 +68,9 @@ export class TaskDetailsComponent implements OnInit {
   }
 
   constructor(private router: Router, private route: ActivatedRoute, private taskService: TaskService) {}
-
+  
   ngOnInit(): void {
     
-    this.task = this.taskService.getTask(this.route.snapshot.params['id']) ?? emptyTask;
-
     this.editTaskForm = new FormGroup({
       title: new FormControl(this.task?.title, [
         Validators.required,
@@ -78,8 +81,10 @@ export class TaskDetailsComponent implements OnInit {
       status: new FormControl(this.task?.status?.value, Validators.required)
     });
 
-    console.log(this.editTaskForm);
+  }
 
+  ngOnDestroy(): void {
+    this.routeParamsSubscription.unsubscribe();
   }
 
   validateTitleUnique(control: FormControl): {[s: string]: boolean} | null {

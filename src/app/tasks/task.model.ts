@@ -10,6 +10,7 @@ export interface Task {
     description: string, 
     type: Option | null, 
     createdOn: Date, 
+    modiefiedOn: Date, 
     status: Option | null
 }
 
@@ -19,5 +20,6 @@ export const emptyTask: Task = {
     description: '',
     type: null,
     createdOn: new Date(),
+    modiefiedOn: new Date(),
     status: null
 }
