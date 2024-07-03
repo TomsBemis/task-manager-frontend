@@ -18,12 +18,16 @@ import { Subscription } from 'rxjs';
 })
 export class TaskDetailsComponent implements OnInit, OnDestroy {
 
-  task: Task | null = null;
+  task: Task = {} as Task;
   editMode: boolean = false;
   taskTypes : Option[] = this.taskService.getTaskTypes();
   taskStatuses : Option[] = this.taskService.getTaskStatuses();
+
   routeParamsSubscription: Subscription = this.route.params.subscribe((params: Params) => {
-    this.task = this.taskService.getTask(params['id']);
+    // Retrieve task by id and if one exists set it to component's task
+    let taskById = this.taskService.getTask(params['id']);
+    if (taskById) this.task = taskById;
+    else throw new Error("");
   });
 
   editTaskForm: FormGroup = new FormGroup({
@@ -55,20 +59,18 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
       throw new Error("");
     }
 
-    if(this.task?.id) {
-      this.taskService.updateTask(
-        this.task.id,
-        {
-          id: this.task.id,
-          title: this.editTaskForm.get('title')?.value,
-          description: this.editTaskForm.get('description')?.value,
-          type: taskType,
-          status: taskStatus,
-          modifiedOn: new Date(),
-          createdOn: this.task.createdOn,
-        }
-      );
-    }
+    this.taskService.updateTask(
+      this.task.id,
+      {
+        id: this.task.id,
+        title: this.editTaskForm.get('title')?.value,
+        description: this.editTaskForm.get('description')?.value,
+        type: taskType,
+        status: taskStatus,
+        modifiedOn: new Date(),
+        createdOn: this.task.createdOn,
+      }
+    );
 
     this.router.navigate(['tasks']);
   }
