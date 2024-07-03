@@ -18,21 +18,31 @@ export class TaskService {
     private loadTaskData(){
 
         let generatedId = 0;
-        let taskType : Option | null;
+        let taskType : Option | undefined = undefined;
+        let taskStatus : Option | undefined = undefined;
 
         taskData.tasks.forEach(taskElementData => {
 
             generatedId = this.idGeneratorService.generateId();
-            taskType = this.taskTypes.find(taskType => taskType.value == taskElementData.type) ?? null;
+            
+            taskType = this.taskTypes.find( taskType => 
+                taskType.value == taskElementData.type
+            );
+            taskStatus = this.taskStatuses.find( taskStatus => 
+                taskStatus.value == taskElementData.status
+            );
+            if (!taskType || !taskStatus) {
+            throw new Error("");
+            }
 
             this.tasks.push({
                 id: generatedId,
                 title: taskElementData.title,
                 description: taskElementData.description,
                 type: taskType,
+                status: taskStatus,
                 createdOn: new Date(taskElementData.createdOn),
-                modifiedOn: new Date(taskElementData.modifiedOn),
-                status: this.taskStatuses.find(taskStatus => taskStatus.value == taskElementData.status) ?? null
+                modifiedOn: new Date(taskElementData.modifiedOn)
             });
         });
     }
