@@ -99,7 +99,7 @@ export class TaskService {
 
     public deleteTask(taskId: number) {
         // Task title is it's unique identifier (needs validation on creation)
-        if (this.tasks) this.tasks.splice(this.tasks.findIndex(task => task.id == taskId), 1);
+        this.tasks.splice(this.tasks.findIndex(task => task.id == taskId), 1);
     }
 
     public getTaskTypes() {
