@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Task, Option, emptyTask, BasicTask } from '../task.model';
+import { Task, Option, BasicTask } from '../task.model';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { TaskService } from '../task.service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -18,7 +18,7 @@ import { Subscription } from 'rxjs';
 })
 export class TaskDetailsComponent implements OnInit, OnDestroy {
 
-  task: Task | null = emptyTask;
+  task: Task | null = null;
   editMode: boolean = false;
   taskTypes : Option[] = this.taskService.getTaskTypes();
   taskStatuses : Option[] = this.taskService.getTaskStatuses();
@@ -44,6 +44,16 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   
   onSubmit () {
     // Get filled out form data using form group
+    let taskType : Option | undefined = this.taskTypes.find( taskType => 
+      taskType.value == this.editTaskForm.get('type')?.value
+    );
+    let taskStatus : Option | undefined = this.taskStatuses.find(taskStatus => 
+      taskStatus.value == this.editTaskForm.get('status')?.value
+    );
+
+    if (!taskType || !taskStatus) {
+      throw new Error("");
+    }
 
     if(this.task?.id) {
       this.taskService.updateTask(
@@ -52,14 +62,10 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
           id: this.task.id,
           title: this.editTaskForm.get('title')?.value,
           description: this.editTaskForm.get('description')?.value,
-          type: this.taskTypes.find( taskType => 
-            taskType.value == this.editTaskForm.get('type')?.value
-          ) ?? null,
+          type: taskType,
+          status: taskStatus,
           modifiedOn: new Date(),
           createdOn: this.task.createdOn,
-          status: this.taskStatuses.find(taskStatus => 
-            taskStatus.value == this.editTaskForm.get('status')?.value
-          ) ?? null,
         }
       );
     }

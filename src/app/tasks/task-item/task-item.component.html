@@ -1,8 +1,8 @@
 <div class="col">
     <div class="row">
         <div class="col-11">
-            <a [routerLink]="['/tasks', taskItem.id ]" class="clearfix text-decoration-none">
-                <h5 class="list-group-item-heading">{{ taskItem.title }} ({{taskItem.type?.displayName}}) </h5>
+            <a [routerLink]="['/tasks', taskItem?.id ]" class="clearfix text-decoration-none">
+                <h5 class="list-group-item-heading">{{ taskItem?.title }} ({{taskItem?.type?.displayName}}) </h5>
             </a>
         </div>
         <div class="col-1">

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { BasicTask, emptyBasicTask } from '../task.model';
+import { Task, BasicTask, emptyTask } from '../task.model';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -15,7 +15,7 @@ export class TaskItemComponent {
 
   @Output() taskDeletedEvent = new EventEmitter<void>();
 
-  @Input() taskItem: BasicTask = emptyBasicTask;
+  @Input() taskItem: BasicTask | null = null;
 
   onDeleted() {
     this.taskDeletedEvent.emit();
