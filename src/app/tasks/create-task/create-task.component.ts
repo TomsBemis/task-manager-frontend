@@ -35,18 +35,19 @@ export class CreateTaskComponent {
 
   onSubmit () {
     // Get filled out form data using form group
+    
     this.taskService.addTask({
       id: 0,
       title: this.createTaskForm.get('title')?.value,
       description: this.createTaskForm.get('description')?.value,
       type: this.taskTypes.find( taskType => 
         taskType.value == this.createTaskForm.get('type')?.value
-      ) ?? null,
-      modifiedOn: new Date(),
-      createdOn: new Date(),
+      ) as Option,
       status: this.taskStatuses.find(taskStatus => 
         taskStatus.value == this.createTaskForm.get('status')?.value
-      ) ?? null,
+      ) as Option,
+      modifiedOn: new Date(),
+      createdOn: new Date()
     });
 
     this.router.navigate(['tasks']);

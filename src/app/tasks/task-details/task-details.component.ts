@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Task, Option, emptyTask } from '../task.model';
+import { Task, Option, BasicTask } from '../task.model';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { TaskService } from '../task.service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -18,12 +18,16 @@ import { Subscription } from 'rxjs';
 })
 export class TaskDetailsComponent implements OnInit, OnDestroy {
 
-  task: Task | null = emptyTask;
+  task: Task = {} as Task;
   editMode: boolean = false;
   taskTypes : Option[] = this.taskService.getTaskTypes();
   taskStatuses : Option[] = this.taskService.getTaskStatuses();
+
   routeParamsSubscription: Subscription = this.route.params.subscribe((params: Params) => {
-    this.task = this.taskService.getTask(params['id']);
+    // Retrieve task by id and if one exists set it to component's task
+    let taskById = this.taskService.getTask(params['id']);
+    if (taskById) this.task = taskById;
+    else throw new Error("");
   });
 
   editTaskForm: FormGroup = new FormGroup({
@@ -45,24 +49,22 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   onSubmit () {
     // Get filled out form data using form group
 
-    if(this.task?.id) {
-      this.taskService.updateTask(
-        this.task.id,
-        {
-          id: this.task.id,
-          title: this.editTaskForm.get('title')?.value,
-          description: this.editTaskForm.get('description')?.value,
-          type: this.taskTypes.find( taskType => 
-            taskType.value == this.editTaskForm.get('type')?.value
-          ) ?? null,
-          modifiedOn: new Date(),
-          createdOn: this.task.createdOn,
-          status: this.taskStatuses.find(taskStatus => 
-            taskStatus.value == this.editTaskForm.get('status')?.value
-          ) ?? null,
-        }
-      );
-    }
+    this.taskService.updateTask(
+      this.task.id,
+      {
+        id: this.task.id,
+        title: this.editTaskForm.get('title')?.value,
+        description: this.editTaskForm.get('description')?.value,
+        type: this.taskTypes.find( taskType => 
+          taskType.value == this.editTaskForm.get('type')?.value
+        ) as Option,
+        status: this.taskStatuses.find(taskStatus => 
+          taskStatus.value == this.editTaskForm.get('status')?.value
+        ) as Option,
+        modifiedOn: new Date(),
+        createdOn: this.task.createdOn,
+      }
+    );
 
     this.router.navigate(['tasks']);
   }
@@ -90,21 +92,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   validateTitleUnique(control: FormControl): {[s: string]: boolean} | null {
 
     // Remove the task being edited from the list of tasks
-    let otherTasks: Task[] = this.taskService.getTasks().tasks.slice();
-    let indexOfCurrentTask = 0;
-    
-    if (this.task != null) {
-      indexOfCurrentTask = this.taskService.getTasks().tasks.indexOf(this.task);
-      if(indexOfCurrentTask != -1) {
-        otherTasks.splice(
-          this
-          .taskService
-          .getTasks()
-          .tasks
-          .indexOf(this.task), 1
-        );
-      }
-    }
+    let otherTasks: BasicTask[] = this.taskService.getTasks().tasks.filter(task => task.id != this.task?.id);
     if (otherTasks
       .flatMap(
         (task: { title: string; }) => {return task.title}

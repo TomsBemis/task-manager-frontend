@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { TaskItemComponent } from '../task-item/task-item.component';
-import { TaskList, emptyTaskList } from '../task-list.model';
 import { TaskService } from '../task.service';
 import { RouterLink } from '@angular/router';
+import { BasicTask } from '../task.model';
 
 @Component({
   selector: 'app-task-list',
@@ -16,7 +16,7 @@ import { RouterLink } from '@angular/router';
 })
 export class TaskListComponent {
 
-  @Input() taskList: TaskList = emptyTaskList;
+  @Input() taskList: {tasks: BasicTask[]} = this.taskService.getTasks();
 
   constructor(private taskService: TaskService) {}
 
