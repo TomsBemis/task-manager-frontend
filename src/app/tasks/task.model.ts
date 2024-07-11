@@ -8,18 +8,13 @@ export interface Task {
     id: number,
     title: string, 
     description: string, 
-    type: Option | null, 
+    type: Option, 
+    status: Option
     createdOn: Date, 
-    modifiedOn: Date, 
-    status: Option | null
+    modifiedOn: Date
 }
-
-export const emptyTask: Task = {
-    id: 0,
-    title: '',
-    description: '',
-    type: null,
-    createdOn: new Date(),
-    modifiedOn: new Date(),
-    status: null
+export interface BasicTask {
+    id: number,
+    title: string,  
+    type: Option,
 }
