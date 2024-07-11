@@ -48,16 +48,6 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   
   onSubmit () {
     // Get filled out form data using form group
-    let taskType : Option | undefined = this.taskTypes.find( taskType => 
-      taskType.value == this.editTaskForm.get('type')?.value
-    );
-    let taskStatus : Option | undefined = this.taskStatuses.find(taskStatus => 
-      taskStatus.value == this.editTaskForm.get('status')?.value
-    );
-
-    if (!taskType || !taskStatus) {
-      throw new Error("");
-    }
 
     this.taskService.updateTask(
       this.task.id,
@@ -65,8 +55,12 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
         id: this.task.id,
         title: this.editTaskForm.get('title')?.value,
         description: this.editTaskForm.get('description')?.value,
-        type: taskType,
-        status: taskStatus,
+        type: this.taskTypes.find( taskType => 
+          taskType.value == this.editTaskForm.get('type')?.value
+        ) as Option,
+        status: this.taskStatuses.find(taskStatus => 
+          taskStatus.value == this.editTaskForm.get('status')?.value
+        ) as Option,
         modifiedOn: new Date(),
         createdOn: this.task.createdOn,
       }

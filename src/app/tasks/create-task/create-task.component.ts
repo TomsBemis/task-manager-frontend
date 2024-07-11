@@ -35,24 +35,17 @@ export class CreateTaskComponent {
 
   onSubmit () {
     // Get filled out form data using form group
-
-    let taskType : Option | undefined = this.taskTypes.find( taskType => 
-      taskType.value == this.createTaskForm.get('type')?.value
-    );
-    let taskStatus : Option | undefined = this.taskStatuses.find(taskStatus => 
-      taskStatus.value == this.createTaskForm.get('status')?.value
-    );
-
-    if (!taskType || !taskStatus) {
-      throw new Error("");
-    }
     
     this.taskService.addTask({
       id: 0,
       title: this.createTaskForm.get('title')?.value,
       description: this.createTaskForm.get('description')?.value,
-      type: taskType,
-      status: taskStatus,
+      type: this.taskTypes.find( taskType => 
+        taskType.value == this.createTaskForm.get('type')?.value
+      ) as Option,
+      status: this.taskStatuses.find(taskStatus => 
+        taskStatus.value == this.createTaskForm.get('status')?.value
+      ) as Option,
       modifiedOn: new Date(),
       createdOn: new Date()
     });
