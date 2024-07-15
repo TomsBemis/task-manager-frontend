@@ -8,9 +8,9 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable()
 export class TaskService {
     
-    private taskTypesSubject = new BehaviorSubject<Option[]>([] as Option[]);
-    private taskStatusesSubject = new BehaviorSubject<Option[]>([] as Option[]);
-    private tasksSubject = new BehaviorSubject<Task[]>([] as Task[]);
+    private taskTypesSubject = new BehaviorSubject<Option[]>([]);
+    private taskStatusesSubject = new BehaviorSubject<Option[]>([]);
+    private tasksSubject = new BehaviorSubject<Task[]>([]);
 
     constructor(private idGeneratorService: IdGeneratorService, private httpClient: HttpClient) {
         this.fetchDataFromDB();
