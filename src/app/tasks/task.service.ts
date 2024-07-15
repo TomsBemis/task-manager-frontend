@@ -1,41 +1,32 @@
 import { Task, Option, BasicTask } from "./task.model";
-import taskData from '../../assets/tasks.json';
 import { IdGeneratorService } from "./id-generator-service";
 import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { beApiRoutes } from "../routes/be-api.routes";
 
 @Injectable()
 export class TaskService {
     
-    private tasks: Task[] = [];
-    
-    private taskTypes: Option[] = taskData.taskTypes;
-    private taskStatuses: Option[] = taskData.taskStatuses;
+    private taskTypes: Option[] = [];
+    private taskStatuses: Option[] = [];
+    private tasks: Task[] = [];    
 
-    constructor(private idGeneratorService: IdGeneratorService) {
-        this.loadTaskData();
+    constructor(private idGeneratorService: IdGeneratorService, private httpClient: HttpClient) {
+        this.fetchDataFromDB();
     }
 
-    private loadTaskData(){
+    private fetchDataFromDB() {
+        // Get task types, task statuses and tasks from DB
+        this.httpClient.get<Option[]>(beApiRoutes.taskStatuses).subscribe(responseTaskStatuses => {
+            this.taskStatuses = responseTaskStatuses;  
+        });
 
-        let generatedId = 0;
+        this.httpClient.get<Option[]>(beApiRoutes.taskTypes).subscribe(responseTaskTypes => {
+            this.taskTypes = responseTaskTypes;            
+        });
 
-        taskData.tasks.forEach(taskElementData => {
-
-            generatedId = this.idGeneratorService.generateId();
-
-            this.tasks.push({
-                id: generatedId,
-                title: taskElementData.title,
-                description: taskElementData.description,
-                type: this.taskTypes.find( taskType => 
-                    taskType.value == taskElementData.type
-                ) as Option,
-                status: this.taskStatuses.find( taskStatus => 
-                    taskStatus.value == taskElementData.status
-                ) as Option,
-                createdOn: new Date(taskElementData.createdOn),
-                modifiedOn: new Date(taskElementData.modifiedOn)
-            });
+        this.httpClient.get<Task[]>(beApiRoutes.tasks).subscribe(responseTasks => {
+            this.tasks = responseTasks;            
         });
     }
 
@@ -59,15 +50,12 @@ export class TaskService {
         return basicTasks;
     }
 
-    public getTasks() : {tasks: BasicTask[]} {
-        // Sort tasks alphabetically
-        return {
-            tasks: this.convertTasksToBasicTasks(this.tasks).slice()
-            .sort(
-                (taskA, taskB) => {
-                    return (taskA.title < taskB.title) ? -1 : (taskA.title > taskB.title) ? 1 : 0
-                }
-            )};
+    public getTasks() : BasicTask[] {
+        return this.convertTasksToBasicTasks(this.tasks).slice()
+        .sort(
+            (taskA, taskB) => {
+                return (taskA.title < taskB.title) ? -1 : (taskA.title > taskB.title) ? 1 : 0
+        });
     }
 
     public getTask(taskId: number): Task | null {
@@ -91,7 +79,7 @@ export class TaskService {
 
     public deleteTask(taskId: number) {
         // Task title is it's unique identifier (needs validation on creation)
-        this.tasks.splice(this.tasks.findIndex(task => task.id == taskId), 1);
+        if (this.tasks) this.tasks.splice(this.tasks.findIndex(task => task.id == taskId), 1);
     }
 
     public getTaskTypes() {

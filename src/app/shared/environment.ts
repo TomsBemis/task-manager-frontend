@@ -1,0 +1,1 @@
+export const beApiUrl = 'http://localhost:5000';

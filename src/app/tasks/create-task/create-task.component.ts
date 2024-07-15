@@ -56,7 +56,6 @@ export class CreateTaskComponent {
   validateTitleUnique(control: FormControl): {[s: string]: boolean} | null {
     if (this.taskService
       .getTasks()
-      .tasks
       .flatMap(
         (task: { title: string; }) => {return task.title}
       ).indexOf(control.value) !== -1) {

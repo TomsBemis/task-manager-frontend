@@ -18,3 +18,9 @@ export interface BasicTask {
     title: string,  
     type: Option,
 }
+
+export interface TaskData { 
+    tasks: Task[]; 
+    taskTypes: Option[]; 
+    taskStatuses?: Option[]; 
+}

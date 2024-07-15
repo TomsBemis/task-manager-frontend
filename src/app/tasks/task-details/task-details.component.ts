@@ -92,7 +92,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   validateTitleUnique(control: FormControl): {[s: string]: boolean} | null {
 
     // Remove the task being edited from the list of tasks
-    let otherTasks: BasicTask[] = this.taskService.getTasks().tasks.filter(task => task.id != this.task?.id);
+    let otherTasks: BasicTask[] = this.taskService.getTasks().filter(task => task.id != this.task?.id);
     if (otherTasks
       .flatMap(
         (task: { title: string; }) => {return task.title}
