@@ -22,5 +22,5 @@ export interface BasicTask {
 export interface TaskData { 
     tasks: Task[]; 
     taskTypes: Option[]; 
-    taskStatuses?: Option[]; 
+    taskStatuses: Option[]; 
 }
