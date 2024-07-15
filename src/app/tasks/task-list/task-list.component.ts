@@ -16,7 +16,7 @@ import { BasicTask } from '../task.model';
 })
 export class TaskListComponent {
 
-  @Input() taskList: {tasks: BasicTask[]} = this.taskService.getTasks();
+  @Input() taskList: BasicTask[] = this.taskService.getTasks();
 
   constructor(private taskService: TaskService) {}
 
@@ -24,4 +24,5 @@ export class TaskListComponent {
     this.taskService.deleteTask(taskId);
     this.taskList = this.taskService.getTasks(); // Reload task data after changes
   }
+
 }
