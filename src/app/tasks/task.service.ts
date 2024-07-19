@@ -16,7 +16,7 @@ export class TaskService {
         this.fetchDataFromDB();
     }
 
-    private fetchDataFromDB() {
+    public fetchDataFromDB() {
         // Get task types, task statuses and tasks from DB
         this.httpClient.get<Option[]>(beApiRoutes.taskStatuses).subscribe(responseTaskStatuses => {
             this.taskStatusesSubject.next(responseTaskStatuses);  
