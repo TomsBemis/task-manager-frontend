@@ -16,7 +16,7 @@ import { BasicTask } from '../task.model';
 })
 export class TaskListComponent {
 
-  @Input() taskList: BasicTask[] = this.taskService.getTasks();
+  @Input() taskList: BasicTask[] = this.taskService.tasksSubject.getValue();
 
   constructor(private taskService: TaskService) {}
 
