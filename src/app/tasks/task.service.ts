@@ -3,7 +3,7 @@ import { IdGeneratorService } from "./id-generator-service";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { beApiRoutes } from "../routes/be-api.routes";
-import { BehaviorSubject, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable()
 export class TaskService {
@@ -11,6 +11,7 @@ export class TaskService {
     private taskTypesSubject = new BehaviorSubject<Option[]>([]);
     private taskStatusesSubject = new BehaviorSubject<Option[]>([]);
     private tasksSubject = new BehaviorSubject<Task[]>([]);
+    public basicTasksSubject = new BehaviorSubject<BasicTask[]>([]);
 
     constructor(private idGeneratorService: IdGeneratorService, private httpClient: HttpClient) {
         this.fetchDataFromDB();
@@ -29,6 +30,8 @@ export class TaskService {
         this.httpClient.get<Task[]>(beApiRoutes.tasks).subscribe(responseTasks => {
             this.tasksSubject.next(responseTasks);    
         });
+
+        this.basicTasksSubject.next(this.getTasks());
     }
 
     private convertTaskToBasicTask(task: Task) : BasicTask {
@@ -64,8 +67,15 @@ export class TaskService {
     }
 
     public addTask(task: Task) {
-        task.id = this.idGeneratorService.generateId();
-        this.tasksSubject.getValue().push(task);
+        let oldTaskList = this.tasksSubject.getValue().slice();
+        this.httpClient.post<Task | null>(beApiRoutes.tasks, task)
+        .subscribe(createdTask => {
+            if(createdTask) {
+                oldTaskList.push(createdTask);
+                this.tasksSubject.next(oldTaskList);
+                this.basicTasksSubject.next(this.getTasks());
+            }
+        });
     }
 
     public updateTask(id: number, editedTask: Task){

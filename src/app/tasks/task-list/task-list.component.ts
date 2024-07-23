@@ -1,8 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { TaskItemComponent } from '../task-item/task-item.component';
 import { TaskService } from '../task.service';
 import { RouterLink } from '@angular/router';
 import { BasicTask } from '../task.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-task-list',
@@ -14,11 +15,23 @@ import { BasicTask } from '../task.model';
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
 })
-export class TaskListComponent {
+export class TaskListComponent implements OnInit, OnDestroy {
 
-  @Input() taskList: BasicTask[] = this.taskService.getTasks();
+  @Input() taskList: BasicTask[] = [];
+
+  private taskListSubscription : Subscription = new Subscription();
 
   constructor(private taskService: TaskService) {}
+
+  ngOnInit(): void {
+    this.taskListSubscription = this.taskService.basicTasksSubject.subscribe(
+      basicTasks => this.taskList = basicTasks
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.taskListSubscription.unsubscribe();
+  }
 
   onDeleted(taskId: number) {
     this.taskService.deleteTask(taskId);
