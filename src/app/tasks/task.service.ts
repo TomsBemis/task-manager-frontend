@@ -3,7 +3,7 @@ import { IdGeneratorService } from "./id-generator-service";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { beApiRoutes } from "../routes/be-api.routes";
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, switchMap } from 'rxjs';
 
 @Injectable()
 export class TaskService {
@@ -59,10 +59,8 @@ export class TaskService {
         });
     }
 
-    public getTask(taskId: number): Task | null {
-        return this.tasksSubject.getValue()?.find(task => {
-            return task.id == taskId;
-        }) ?? null;
+    public getTask(taskId: number): Observable<Task | null> {
+        return this.httpClient.get<Task | null>(beApiRoutes.taskDetails + taskId);
     }
 
     public addTask(task: Task) {
