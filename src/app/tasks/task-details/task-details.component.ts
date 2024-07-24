@@ -25,7 +25,10 @@ export class TaskDetailsComponent implements OnInit {
   taskStatuses : Option[] = this.taskService.getTaskStatuses();
 
   editTaskForm: FormGroup = new FormGroup({
-    title: new FormControl(),
+    title: new FormControl(this.task?.title, [
+      Validators.required,
+      this.validateTitleUnique.bind(this)
+    ]),
     description: new FormControl(),
     type: new FormControl(),
     status: new FormControl()
@@ -77,18 +80,16 @@ export class TaskDetailsComponent implements OnInit {
         return this.taskService.getTask(taskId)
       })).subscribe(responseTask => {
         this.task = responseTask;
+        this.editTaskForm = new FormGroup({
+          title: new FormControl(this.task?.title, [
+            Validators.required,
+            this.validateTitleUnique.bind(this)
+          ]), //Custom validator for unique title
+          description: new FormControl(this.task?.description),
+          type: new FormControl(this.task?.type?.value, Validators.required),
+          status: new FormControl(this.task?.status?.value, Validators.required)
+        });
       });
-
-    this.editTaskForm = new FormGroup({
-      title: new FormControl(this.task?.title, [
-        Validators.required,
-        this.validateTitleUnique.bind(this)
-      ]), //Custom validator for unique title
-      description: new FormControl(this.task?.description),
-      type: new FormControl(this.task?.type?.value, Validators.required),
-      status: new FormControl(this.task?.status?.value, Validators.required)
-    });
-
   }
 
   validateTitleUnique(control: FormControl): {[s: string]: boolean} | null {

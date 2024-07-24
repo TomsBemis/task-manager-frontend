@@ -77,11 +77,17 @@ export class TaskService {
         });
     }
 
-    public updateTask(id: number, editedTask: Task){
+    public updateTask(taskId: number, editedTask: Task){
         // Update the task if the ids match
-        this.tasks = this.tasks.map((task: Task) => {
-            if(task.id === id) task = editedTask;
-            return task
+        this.httpClient.patch<Task | null>(beApiRoutes.taskDetails + taskId, editedTask)
+        .subscribe(updatedTask => {
+            if (updatedTask) {
+                this.tasks = this.tasks.map((task: Task) => {
+                    if(task.id === taskId) task = updatedTask;
+                    return task
+                });
+                this.basicTasksSubject.next(this.getTasks());
+            }
         });
     }
 
