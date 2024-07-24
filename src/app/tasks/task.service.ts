@@ -86,11 +86,12 @@ export class TaskService {
     }
 
     public deleteTask(taskId: number) {
-        // Task title is it's unique identifier (needs validation on creation)
-        this.tasks = this.tasks.splice(
-                this.tasks.findIndex(task => task.id == taskId), 
-                1
-            );
+        this.httpClient.delete<void>(beApiRoutes.taskDetails + taskId).subscribe(() => {
+            this.tasks = this.tasks.filter(task => {
+                return task.id !== taskId
+            });
+            this.basicTasksSubject.next(this.getTasks());
+        });
     }
 
     public getTaskTypes() {
