@@ -86,10 +86,8 @@ export class TaskService {
     }
 
     public deleteTask(taskId: number) {
-        this.httpClient.delete<void>(beApiRoutes.taskDetails + taskId).subscribe(() => {
-            this.tasks = this.tasks.filter(task => {
-                return task.id !== taskId
-            });
+        this.httpClient.delete<Task[]>(beApiRoutes.taskDetails + taskId).subscribe((newTasks) => {
+            this.tasks = newTasks;
             this.basicTasksSubject.next(this.getTasks());
         });
     }
