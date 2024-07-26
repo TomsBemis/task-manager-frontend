@@ -1,15 +1,13 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { SynchronizeComponent } from "../synchronize/synchronize.component";
 
 @Component({
   selector: 'app-nav',
   standalone: true,
   imports: [
     RouterLink,
-    RouterLinkActive,
-    SynchronizeComponent
-],
+    RouterLinkActive
+  ],
   templateUrl: './nav.component.html',
   styleUrl: './nav.component.scss'
 })

@@ -4,7 +4,7 @@ import { TaskListComponent } from '../tasks/task-list/task-list.component';
 import { TaskDetailsComponent } from '../tasks/task-details/task-details.component';
 
 export const appRoutes: Routes = [
-    { path: '', pathMatch: 'full', redirectTo: 'tasks' },
+    { path: '', component: TaskListComponent },
     { path: 'tasks/create', component: CreateTaskComponent },
     { path: 'tasks', component: TaskListComponent },
     { path: 'tasks/:id', component: TaskDetailsComponent },
