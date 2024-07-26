@@ -46,8 +46,8 @@ export class CreateTaskComponent {
       status: this.taskStatuses.find(taskStatus => 
         taskStatus.value == this.createTaskForm.get('status')?.value
       ) as Option,
-      modifiedOn: new Date(),
-      createdOn: new Date()
+      updatedAt: new Date(),
+      createdAt: new Date()
     });
 
     this.router.navigate(['tasks']);
