@@ -8,15 +8,15 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable()
 export class TaskService {
     
-    private taskTypesSubject = new BehaviorSubject<Option[]>([]);
-    private taskStatusesSubject = new BehaviorSubject<Option[]>([]);
-    private tasksSubject = new BehaviorSubject<Task[]>([]);
+    public taskTypesSubject = new BehaviorSubject<Option[]>([]);
+    public taskStatusesSubject = new BehaviorSubject<Option[]>([]);
+    public tasksSubject = new BehaviorSubject<BasicTask[]>([]);
 
     constructor(private idGeneratorService: IdGeneratorService, private httpClient: HttpClient) {
         this.fetchDataFromDB();
     }
 
-    private fetchDataFromDB() {
+    public fetchDataFromDB() {
         // Get task types, task statuses and tasks from DB
         this.httpClient.get<Option[]>(beApiRoutes.taskStatuses).subscribe(responseTaskStatuses => {
             this.taskStatusesSubject.next(responseTaskStatuses);  
@@ -39,27 +39,18 @@ export class TaskService {
         };
     }
 
-    private convertBasicTaskToTask(basicTask: BasicTask) : Task | null {
-        let taskIndex: number = this.tasksSubject.getValue().findIndex(task => task.id == basicTask.id);
-        if(taskIndex === -1) return null;
-        return this.tasksSubject.getValue()[taskIndex];
-    }
-
-    private convertTasksToBasicTasks(tasks: Task[]) : BasicTask[] {
-        let basicTasks : BasicTask[] = [];
-        this.tasksSubject.getValue().forEach(task => basicTasks.push(this.convertTaskToBasicTask(task)));
-        return basicTasks;
-    }
-
     public getTasks() : BasicTask[] {
-        return this.convertTasksToBasicTasks(this.tasksSubject.getValue()).slice()
+        this.httpClient.get<Task[]>(beApiRoutes.tasks).subscribe(responseTasks => {
+            this.tasksSubject.next(responseTasks);    
+        });
+        return this.tasksSubject.getValue().slice()
         .sort(
             (taskA, taskB) => {
                 return (taskA.title < taskB.title) ? -1 : (taskA.title > taskB.title) ? 1 : 0
         });
     }
 
-    public getTask(taskId: number): Task | null {
+    public getTask(taskId: number): any {
         return this.tasksSubject.getValue()?.find(task => {
             return task.id == taskId;
         }) ?? null;
@@ -71,11 +62,6 @@ export class TaskService {
     }
 
     public updateTask(id: number, editedTask: Task){
-        // Update the task if the ids match
-        this.tasksSubject.next(this.tasksSubject.getValue().map((task: Task) => {
-            if(task.id === id) task = editedTask;
-            return task
-        }));
     }
 
     public deleteTask(taskId: number) {
