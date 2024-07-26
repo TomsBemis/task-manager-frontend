@@ -1,41 +1,30 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { TaskItemComponent } from '../task-item/task-item.component';
 import { TaskService } from '../task.service';
 import { RouterLink } from '@angular/router';
 import { BasicTask } from '../task.model';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
   imports: [
     TaskItemComponent,
-    RouterLink
+    RouterLink,
+    AsyncPipe
   ],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
 })
-export class TaskListComponent implements OnInit, OnDestroy {
+export class TaskListComponent {
 
-  @Input() taskList: BasicTask[] = [];
-
-  private taskListSubscription : Subscription = new Subscription();
+  @Input() taskList: Subject<BasicTask[]> = this.taskService.basicTasksSubject;
 
   constructor(private taskService: TaskService) {}
 
-  ngOnInit(): void {
-    this.taskListSubscription = this.taskService.basicTasksSubject.subscribe(
-      basicTasks => this.taskList = basicTasks
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.taskListSubscription.unsubscribe();
-  }
-
   onDeleted(taskId: number) {
     this.taskService.deleteTask(taskId);
-    this.taskList = this.taskService.getTasks(); // Reload task data after changes
   }
 
 }
