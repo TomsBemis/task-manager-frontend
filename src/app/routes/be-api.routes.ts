@@ -1,8 +1,7 @@
 import { beApiUrl } from "../../environment";
 
 export const beApiRoutes = {
-    taskTypes : beApiUrl + '/api/task-types',
-    taskStatuses : beApiUrl + '/api/task-statuses',
+    essentialTaskData : beApiUrl + '/api/essential-task-data',
     tasks : beApiUrl + '/api/tasks',
     taskDetails : beApiUrl + '/api/tasks/'
 }
