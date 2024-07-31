@@ -1,97 +1,80 @@
-import { Task, Option, BasicTask } from "./task.model";
+import { Task, Option, BasicTask, TaskData } from "./task.model";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { beApiRoutes } from "../routes/be-api.routes";
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, first, Observable, tap } from 'rxjs';
 
 @Injectable()
-export class TaskService {
+export class TaskService{
     
     private taskTypes : Option[] = [];
     private taskStatuses : Option[] = [];
-    private tasks : Task[] = []
     public basicTasksSubject = new BehaviorSubject<BasicTask[]>([]);
+    public basicTasksObservable$ = this.basicTasksSubject.asObservable();
 
     constructor(private httpClient: HttpClient) {
-        this.fetchDataFromDB();
+        this.getEssentialData();
     }
 
-    private fetchDataFromDB() {
+    public getEssentialData() : Observable<TaskData> {
         // Get task types, task statuses and tasks from DB
-        this.httpClient.get<Option[]>(beApiRoutes.taskStatuses).subscribe(responseTaskStatuses => {
-            this.taskStatuses = responseTaskStatuses;  
-        });
-
-        this.httpClient.get<Option[]>(beApiRoutes.taskTypes).subscribe(responseTaskTypes => {
-            this.taskTypes = responseTaskTypes;           
-        });
-
-        this.httpClient.get<Task[]>(beApiRoutes.tasks).subscribe(responseTasks => {
-            this.tasks = responseTasks;    
-        });
-
-        this.basicTasksSubject.next(this.getTasks());
+        return this.httpClient.get<TaskData>(beApiRoutes.essentialTaskData).pipe(
+            first(),
+            tap(essentialData => {
+                this.taskStatuses = essentialData.taskStatuses;
+                this.taskTypes = essentialData.taskTypes;
+                this.basicTasksSubject.next(essentialData.tasks);
+            }));
     }
 
-    private convertTaskToBasicTask(task: Task) : BasicTask {
-        return { 
-            id: task.id,
-            title: task.title,
-            type: task.type
-        };
-    }
-
-    private convertBasicTaskToTask(basicTask: BasicTask) : Task | null {
-        let taskIndex: number = this.tasks.findIndex(task => task.id == basicTask.id);
-        if(taskIndex === -1) return null;
-        return this.tasks[taskIndex];
-    }
-
-    private convertTasksToBasicTasks(tasks: Task[]) : BasicTask[] {
-        let basicTasks : BasicTask[] = [];
-        this.tasks.forEach(task => basicTasks.push(this.convertTaskToBasicTask(task)));
-        return basicTasks;
-    }
-
-    public getTasks() : BasicTask[] {
-        return this.convertTasksToBasicTasks(this.tasks).slice()
-        .sort(
-            (taskA, taskB) => {
-                return (taskA.title < taskB.title) ? -1 : (taskA.title > taskB.title) ? 1 : 0
-        });
+    public getTasks() : Observable<Task[]> {
+        return this.httpClient.get<Task[]>(beApiRoutes.tasks).pipe(
+            first(),
+            tap(responseTasks => {
+                this.basicTasksSubject.next(responseTasks.sort(
+                    (taskA, taskB) => {
+                        return (taskA.title < taskB.title) ? -1 : (taskA.title > taskB.title) ? 1 : 0
+                }));
+            })
+        );
     }
 
     public getTask(taskId: number): Observable<Task | null> {
         return this.httpClient.get<Task | null>(beApiRoutes.taskDetails + taskId);
     }
 
-    public addTask(task: Task) {
-        let oldTaskList = this.tasks.slice();
-        this.httpClient.post<Task | null>(beApiRoutes.tasks, task)
-        .subscribe(createdTask => {
-            if(createdTask) {
-                oldTaskList.push(createdTask);
-                this.tasks = oldTaskList;
-                this.basicTasksSubject.next(this.getTasks());
-            }
-        });
+    public addTask(task: Task): Observable<Task | null>{
+        let oldTaskList = this.basicTasksSubject.getValue();
+        return this.httpClient.post<Task | null>(beApiRoutes.tasks, task)
+        .pipe(
+            first(),
+            tap(createdTask => {
+                if(createdTask) {
+                    oldTaskList.push(createdTask);
+                    this.basicTasksSubject.next(oldTaskList);
+                }
+            })
+        );
     }
 
-    public updateTask(id: number, editedTask: Task){
+    public updateTask(taskId: number, editedTask: Task) : Observable<Task | null>{
         // Update the task if the ids match
-        this.tasks = this.tasks.map((task: Task) => {
-            if(task.id === id) task = editedTask;
-            return task
-        });
+        return this.httpClient.patch<Task | null>(beApiRoutes.taskDetails + taskId, editedTask)
+        .pipe(
+            first(),
+            tap(updatedTask => {
+                if(updatedTask) {
+                    this.basicTasksSubject.next(this.basicTasksSubject.getValue().map(task => {
+                        if(task.id == taskId) return updatedTask;
+                        return task;
+                    }));
+                }
+            })
+        );
     }
 
-    public deleteTask(taskId: number) {
-        this.httpClient.delete<void>(beApiRoutes.taskDetails + taskId).subscribe(() => {
-            this.tasks = this.tasks.filter(task => {
-                return task.id !== taskId
-            });
-            this.basicTasksSubject.next(this.getTasks());
-        });
+    public deleteTask(taskId: number) : Observable<BasicTask[]> {
+        return this.httpClient.delete<BasicTask[]>(beApiRoutes.taskDetails + taskId);
     }
 
     public getTaskTypes() {
