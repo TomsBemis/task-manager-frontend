@@ -1,5 +1,5 @@
 <ul class="list-group">
-    @for (task of taskList; track task) {
+    @for (task of taskList | async; track task) {
         <li class="list-group-item">
             <app-task-item 
             (taskDeletedEvent)="onDeleted(task.id!)" 
