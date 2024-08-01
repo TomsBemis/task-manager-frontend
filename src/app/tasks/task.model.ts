@@ -10,8 +10,8 @@ export interface Task {
     description: string, 
     type: Option, 
     status: Option
-    createdOn: Date, 
-    modifiedOn: Date
+    createdAt: Date, 
+    updatedAt: Date
 }
 export interface BasicTask {
     id: number,

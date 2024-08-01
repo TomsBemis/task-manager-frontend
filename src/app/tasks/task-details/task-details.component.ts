@@ -1,34 +1,30 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Task, Option, BasicTask } from '../task.model';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TaskService } from '../task.service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { KeyValuePipe } from '@angular/common';
-import { Subscription } from 'rxjs';
+import { DatePipe, KeyValuePipe } from '@angular/common';
+import { map, Subscription, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-task-details',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    KeyValuePipe
+    KeyValuePipe,
+    DatePipe
   ],
   templateUrl: './task-details.component.html',
   styleUrl: './task-details.component.scss'
 })
 export class TaskDetailsComponent implements OnInit, OnDestroy {
 
-  task: Task = {} as Task;
+  task: Task | null = null;
   editMode: boolean = false;
   taskTypes : Option[] = this.taskService.getTaskTypes();
   taskStatuses : Option[] = this.taskService.getTaskStatuses();
-
-  routeParamsSubscription: Subscription = this.route.params.subscribe((params: Params) => {
-    // Retrieve task by id and if one exists set it to component's task
-    let taskById = this.taskService.getTask(params['id']);
-    if (taskById) this.task = taskById;
-    else throw new Error("");
-  });
+  deleteTaskSubscription = new Subscription();
+  getCurrentTaskSubscription = new Subscription();
 
   editTaskForm: FormGroup = new FormGroup({
     title: new FormControl(),
@@ -38,8 +34,10 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   });
 
   onDeleted(taskId: number) {
-    this.taskService.deleteTask(taskId);
-    this.router.navigate(['tasks']);
+    this.deleteTaskSubscription = this.taskService.deleteTask(taskId).subscribe(newTaskList => {
+      this.taskService.basicTasksSubject.next(newTaskList);
+      this.router.navigate(['tasks']);
+    });
   }
 
   toggleEditMode() {
@@ -49,50 +47,67 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   onSubmit () {
     // Get filled out form data using form group
 
-    this.taskService.updateTask(
-      this.task.id,
-      {
-        id: this.task.id,
-        title: this.editTaskForm.get('title')?.value,
-        description: this.editTaskForm.get('description')?.value,
-        type: this.taskTypes.find( taskType => 
-          taskType.value == this.editTaskForm.get('type')?.value
-        ) as Option,
-        status: this.taskStatuses.find(taskStatus => 
-          taskStatus.value == this.editTaskForm.get('status')?.value
-        ) as Option,
-        modifiedOn: new Date(),
-        createdOn: this.task.createdOn,
-      }
-    );
-
-    this.router.navigate(['tasks']);
+    if(this.task) {
+      this.taskService.updateTask(
+        this.task.id,
+        {
+          id: this.task.id,
+          title: this.editTaskForm.get('title')?.value,
+          description: this.editTaskForm.get('description')?.value,
+          type: this.taskTypes.find( taskType => 
+            taskType.value == this.editTaskForm.get('type')?.value
+          ) as Option,
+          status: this.taskStatuses.find(taskStatus => 
+            taskStatus.value == this.editTaskForm.get('status')?.value
+          ) as Option,
+          updatedAt: new Date(),
+          createdAt: this.task.createdAt,
+        }
+      ).subscribe( updatedTask => {
+        if(updatedTask) {
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+            this.router.navigate(['/tasks', this.task?.id])});
+        }
+        else this.router.navigate(['/tasks']);
+      });
+  
+    }    
   }
 
   constructor(private router: Router, private route: ActivatedRoute, private taskService: TaskService) {}
+  ngOnDestroy(): void {
+    this.deleteTaskSubscription.unsubscribe();
+    this.getCurrentTaskSubscription.unsubscribe();
+  }
   
   ngOnInit(): void {
     
-    this.editTaskForm = new FormGroup({
-      title: new FormControl(this.task?.title, [
-        Validators.required,
-        this.validateTitleUnique.bind(this)
-      ]), //Custom validator for unique title
-      description: new FormControl(this.task?.description),
-      type: new FormControl(this.task?.type?.value, Validators.required),
-      status: new FormControl(this.task?.status?.value, Validators.required)
-    });
+    // Get task id from route parameters then pass it as argument for task service
+    // set the component task when async method is done
+    this.getCurrentTaskSubscription = this.route.params.pipe(
+      map(params => params['id'] as number),
+      switchMap(taskId => {
+        return this.taskService.getTask(taskId)
+      })).subscribe(responseTask => {
+        this.task = responseTask;
 
-  }
+        this.editTaskForm = new FormGroup({
+          title: new FormControl(this.task?.title, [
+            Validators.required,
+            this.validateTitleUnique.bind(this)
+          ]), //Custom validator for unique title
+          description: new FormControl(this.task?.description),
+          type: new FormControl(this.task?.type?.value, Validators.required),
+          status: new FormControl(this.task?.status?.value, Validators.required)
+        });
+      });
 
-  ngOnDestroy(): void {
-    this.routeParamsSubscription.unsubscribe();
   }
 
   validateTitleUnique(control: FormControl): {[s: string]: boolean} | null {
 
     // Remove the task being edited from the list of tasks
-    let otherTasks: BasicTask[] = this.taskService.getTasks().filter(task => task.id != this.task?.id);
+    let otherTasks: BasicTask[] = this.taskService.basicTasksSubject.getValue().filter(task => task.id != this.task?.id);
     if (otherTasks
       .flatMap(
         (task: { title: string; }) => {return task.title}
