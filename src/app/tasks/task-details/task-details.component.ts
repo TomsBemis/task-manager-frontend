@@ -47,7 +47,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     this.editMode = !this.editMode;
   }
   
-  onSubmit () {
+  onSubmit (task : Task) {
     // Get filled out form data using form group
 
     if(this.task) {
