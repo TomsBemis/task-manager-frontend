@@ -7,8 +7,7 @@ import { SynchronizeComponent } from "../synchronize/synchronize.component";
   standalone: true,
   imports: [
     RouterLink,
-    RouterLinkActive,
-    SynchronizeComponent
+    RouterLinkActive
 ],
   templateUrl: './nav.component.html',
   styleUrl: './nav.component.scss'

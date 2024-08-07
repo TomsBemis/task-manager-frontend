@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TaskService } from '../task.service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DatePipe, KeyValuePipe } from '@angular/common';
-import { map, Subscription, switchMap } from 'rxjs';
+import { map, Subscription, switchMap, take } from 'rxjs';
 
 @Component({
   selector: 'app-task-details',
@@ -24,10 +24,13 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   taskTypes : Option[] = this.taskService.getTaskTypes();
   taskStatuses : Option[] = this.taskService.getTaskStatuses();
   deleteTaskSubscription = new Subscription();
-  getCurrentTaskSubscription = new Subscription();
+  updateTaskSubscription = new Subscription();
 
   editTaskForm: FormGroup = new FormGroup({
-    title: new FormControl(),
+    title: new FormControl(this.task?.title, [
+      Validators.required,
+      this.validateTitleUnique.bind(this)
+    ]),
     description: new FormControl(),
     type: new FormControl(),
     status: new FormControl()
@@ -48,7 +51,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     // Get filled out form data using form group
 
     if(this.task) {
-      this.taskService.updateTask(
+      this.updateTaskSubscription = this.taskService.updateTask(
         this.task.id,
         {
           id: this.task.id,
@@ -77,18 +80,23 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   constructor(private router: Router, private route: ActivatedRoute, private taskService: TaskService) {}
   ngOnDestroy(): void {
     this.deleteTaskSubscription.unsubscribe();
-    this.getCurrentTaskSubscription.unsubscribe();
+    this.updateTaskSubscription.unsubscribe();
   }
   
   ngOnInit(): void {
-    
+    this.getCurrentTask();
+  }
+
+  getCurrentTask() {
     // Get task id from route parameters then pass it as argument for task service
     // set the component task when async method is done
-    this.getCurrentTaskSubscription = this.route.params.pipe(
+    this.route.params.pipe(
       map(params => params['id'] as number),
       switchMap(taskId => {
         return this.taskService.getTask(taskId)
-      })).subscribe(responseTask => {
+      }),
+      take(1)
+    ).subscribe(responseTask => {
         this.task = responseTask;
 
         this.editTaskForm = new FormGroup({
@@ -101,7 +109,6 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
           status: new FormControl(this.task?.status?.value, Validators.required)
         });
       });
-
   }
 
   validateTitleUnique(control: FormControl): {[s: string]: boolean} | null {
