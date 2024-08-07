@@ -1,6 +1,6 @@
 <div class="col">
     @if(this.task){
-        <form [formGroup]="editTaskForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="editTaskForm" (ngSubmit)="onSubmit(this.task)">
             <div class="card card-body">
                 <div class="row">
                     <div class="col-3">

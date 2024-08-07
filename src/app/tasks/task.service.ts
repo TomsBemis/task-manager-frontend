@@ -7,15 +7,12 @@ import { BehaviorSubject, first, Observable, tap } from 'rxjs';
 @Injectable()
 export class TaskService{
     
-
     private taskTypes : Option[] = [];
     private taskStatuses : Option[] = [];
     public basicTasksSubject = new BehaviorSubject<BasicTask[]>([]);
     public basicTasksObservable$ = this.basicTasksSubject.asObservable();
 
-    constructor(private httpClient: HttpClient) {
-        this.getEssentialData();
-    }
+    constructor(private httpClient: HttpClient) {}
 
 public getEssentialData() : Observable<TaskData> {
         // Get task types, task statuses and tasks from DB
