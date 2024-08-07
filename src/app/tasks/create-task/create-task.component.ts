@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Option } from '../task.model';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskService } from '../task.service';
 import { KeyValuePipe } from '@angular/common';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-create-task',
@@ -15,11 +16,12 @@ import { Router } from '@angular/router';
   templateUrl: './create-task.component.html',
   styleUrl: './create-task.component.scss'
 })
-export class CreateTaskComponent {
+export class CreateTaskComponent implements OnDestroy {
 
   taskTypes : Option[] = this.taskService.getTaskTypes();
-
   taskStatuses : Option[] = this.taskService.getTaskStatuses();
+
+  addTaskSubscription : Subscription = new Subscription();
 
   createTaskForm: FormGroup = new FormGroup({
     title: new FormControl(null, [
@@ -32,11 +34,15 @@ export class CreateTaskComponent {
   });
 
   constructor(private taskService: TaskService, private router: Router) {}
+  
+  ngOnDestroy(): void {
+    this.addTaskSubscription.unsubscribe();
+  }
 
   onSubmit () {
     // Get filled out form data using form group
     
-    this.taskService.addTask({
+    this.addTaskSubscription = this.taskService.addTask({
       id: 0,
       title: this.createTaskForm.get('title')?.value,
       description: this.createTaskForm.get('description')?.value,
@@ -46,16 +52,16 @@ export class CreateTaskComponent {
       status: this.taskStatuses.find(taskStatus => 
         taskStatus.value == this.createTaskForm.get('status')?.value
       ) as Option,
-      modifiedOn: new Date(),
-      createdOn: new Date()
+      updatedAt: new Date(),
+      createdAt: new Date()
+    }).subscribe(createdTask => {
+      if(createdTask) this.router.navigate(['/tasks', createdTask.id]);
     });
-
-    this.router.navigate(['tasks']);
   }
 
   validateTitleUnique(control: FormControl): {[s: string]: boolean} | null {
     if (this.taskService
-      .getTasks()
+      .basicTasksSubject.getValue()
       .flatMap(
         (task: { title: string; }) => {return task.title}
       ).indexOf(control.value) !== -1) {

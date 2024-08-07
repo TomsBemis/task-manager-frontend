@@ -1,8 +1,8 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TaskItemComponent } from '../task-item/task-item.component';
 import { TaskService } from '../task.service';
 import { RouterLink } from '@angular/router';
-import { BasicTask } from '../task.model';
+import { AsyncPipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -10,26 +10,42 @@ import { Subscription } from 'rxjs';
   standalone: true,
   imports: [
     TaskItemComponent,
-    RouterLink
+    RouterLink,
+    AsyncPipe
   ],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
 })
-export class TaskListComponent implements OnDestroy {
+export class TaskListComponent implements OnInit, OnDestroy {
 
-  @Input() taskList: BasicTask[] = this.taskService.tasksSubject.getValue();
-  private taskListSubscription : Subscription = this.taskService.tasksSubject.subscribe(
-    tasks => this.taskList = tasks
-  );
+  taskList = this.taskService.basicTasksSubject;
+  taskList$ = this.taskService.basicTasksSubject.asObservable();
+  deleteTaskSubscription = new Subscription();
+  getEssentialDataSubscription = new Subscription();
 
   constructor(private taskService: TaskService) {}
+
   ngOnDestroy(): void {
-    this.taskListSubscription.unsubscribe();
+    this.deleteTaskSubscription.unsubscribe();
+    this.getEssentialDataSubscription.unsubscribe();
+  }
+
+  ngOnInit(): void {
+    // If task list is empty then try to initialize
+    if(this.taskList.getValue().length === 0) {
+      this.getEssentialDataSubscription = this.taskService.getEssentialData().subscribe(
+        essentialData => {
+          this.taskList.next(essentialData.tasks);
+        }
+      )
+    }
   }
 
   onDeleted(taskId: number) {
-    this.taskService.deleteTask(taskId);
-    this.taskList = this.taskService.getTasks(); // Reload task data after changes
+    this.deleteTaskSubscription = this.taskService.deleteTask(taskId)
+    .subscribe(newTaskList => {
+      this.taskList.next(newTaskList);
+    });
   }
 
 }
