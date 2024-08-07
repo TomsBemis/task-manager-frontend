@@ -90,7 +90,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   getCurrentTask() {
     // Get task id from route parameters then pass it as argument for task service
     // set the component task when async method is done
-    this.getCurrentTaskSubscription = this.route.params.pipe(
+    this.route.params.pipe(
       map(params => params['id'] as number),
       switchMap(taskId => {
         return this.taskService.getTask(taskId)
