@@ -12,9 +12,7 @@ export class TaskService{
     public basicTasksSubject = new BehaviorSubject<BasicTask[]>([]);
     public basicTasksObservable$ = this.basicTasksSubject.asObservable();
 
-    constructor(private httpClient: HttpClient) {
-        this.getEssentialData();
-    }
+    constructor(private httpClient: HttpClient) {}
 
     public getEssentialData() : Observable<TaskData> {
         // Get task types, task statuses and tasks from DB
@@ -57,7 +55,7 @@ export class TaskService{
         );
     }
 
-    public updateTask(taskId: number, editedTask: Task) : Observable<Task | null>{
+public updateTask(taskId: number, editedTask: Task) : Observable<Task | null>{
         // Update the task if the ids match
         return this.httpClient.patch<Task | null>(beApiRoutes.taskDetails + taskId, editedTask)
         .pipe(
