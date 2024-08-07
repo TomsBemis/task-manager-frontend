@@ -7,7 +7,7 @@ import { BehaviorSubject, first, Observable, tap } from 'rxjs';
 @Injectable()
 export class TaskService{
     
-private taskTypes : Option[] = [];
+    private taskTypes : Option[] = [];
     private taskStatuses : Option[] = [];
     public basicTasksSubject = new BehaviorSubject<BasicTask[]>([]);
     public basicTasksObservable$ = this.basicTasksSubject.asObservable();
