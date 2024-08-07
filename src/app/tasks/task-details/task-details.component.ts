@@ -24,7 +24,6 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   taskTypes : Option[] = this.taskService.getTaskTypes();
   taskStatuses : Option[] = this.taskService.getTaskStatuses();
   deleteTaskSubscription = new Subscription();
-  getCurrentTaskSubscription = new Subscription();
   updateTaskSubscription = new Subscription();
 
   editTaskForm: FormGroup = new FormGroup({
@@ -81,7 +80,6 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   constructor(private router: Router, private route: ActivatedRoute, private taskService: TaskService) {}
   ngOnDestroy(): void {
     this.deleteTaskSubscription.unsubscribe();
-    this.getCurrentTaskSubscription.unsubscribe();
     this.updateTaskSubscription.unsubscribe();
   }
   
@@ -92,7 +90,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   getCurrentTask() {
     // Get task id from route parameters then pass it as argument for task service
     // set the component task when async method is done
-    this.getCurrentTaskSubscription = this.route.params.pipe(
+    this.route.params.pipe(
       map(params => params['id'] as number),
       switchMap(taskId => {
         return this.taskService.getTask(taskId)
