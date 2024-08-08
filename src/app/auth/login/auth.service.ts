@@ -11,13 +11,13 @@ export class AuthService {
     currentUser : User | null = null;
     constructor (private httpClient: HttpClient) {}
 
-    public login(userCredentials : { username : string, password : string}) : Observable<HttpResponse<User>> {
-        return this.httpClient.post<User>(
+    public login(userCredentials : { username : string, password : string}) : Observable<HttpResponse<{ token : string, user : User }>> {
+        return this.httpClient.post<{ token : string, user : User }>(
             beApiRoutes.login, 
             userCredentials,
             { observe: 'response' }
         ).pipe(first(), tap(response => {
-            if (response.ok) this.currentUser = response.body;
+            if (response.ok) this.currentUser = response.body?.user ?? null;
             return response;
         }));
     }

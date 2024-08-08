@@ -35,9 +35,14 @@ export class LoginComponent implements OnDestroy {
       username : this.loginTaskForm.get('username')?.value,
       password : this.loginTaskForm.get('password')?.value
     }).subscribe(responseData => {
+      if(responseData.body){
+        localStorage.setItem('loggedIn',"true");
+        localStorage.setItem('userId',responseData.body.user.id);
+        localStorage.setItem('sessionToken',responseData.body.token);
+      }
       this.router.navigate(['/tasks'])
     }, responseError => {
-      this.loginErrorMessage = responseError.error;
+      this.loginErrorMessage = responseError.error.message;
     });
   }
 }
