@@ -7,7 +7,7 @@
                     {{loginErrorMessage}}
                 </div>
             }
-            <form [formGroup]="loginTaskForm" (ngSubmit)="onLogin()">
+            <form [formGroup]="loginTaskForm" (ngSubmit)="onLogin(loginTaskForm.getRawValue())">
                 <div class="form-group row mb-3">
                     <label class="col-4 col-form-label" for="username">Username</label>
                     <div class="col-8">

@@ -5,3 +5,14 @@ export interface User {
     firstName: string,
     lastName: string,
 }
+
+export interface LoginCredentials { 
+    username : string, 
+    password : string
+}
+
+export interface AuthResponse {
+    accessToken: string,
+    refreshToken: string,
+    user: User,
+}

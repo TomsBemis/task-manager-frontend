@@ -1,16 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { User } from '../../auth/user.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-nav',
   standalone: true,
   imports: [
+    CommonModule,
     RouterLink,
-    RouterLinkActive
+    RouterLinkActive,
+    AsyncPipe
 ],
   templateUrl: './nav.component.html',
   styleUrl: './nav.component.scss'
 })
-export class NavComponent {
+export class NavComponent implements OnDestroy{
 
+  currentUser: User | null = null;
+  currentUserSubscription: Subscription = this.authService.currentUser$.subscribe(user => {
+    this.currentUser = user;
+  }) 
+
+  constructor(private authService : AuthService) {}
+
+  ngOnDestroy(): void {
+    this.currentUserSubscription.unsubscribe();
+  }
 }

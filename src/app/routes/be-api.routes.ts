@@ -1,8 +1,12 @@
 import { beApiUrl } from "../../environment";
 
+const taskRouteGroup : string = '/api/tasks';
+const authRouteGroup : string = '/api/auth';
+
 export const beApiRoutes = {
-    essentialTaskData : beApiUrl + '/api/essential-task-data',
-    tasks : beApiUrl + '/api/tasks',
-    taskDetails : beApiUrl + '/api/tasks/',
-    login : beApiUrl + '/api/login'
+    essentialTaskData : beApiUrl + taskRouteGroup + '/essential-task-data',
+    tasks : beApiUrl + taskRouteGroup,
+    login : beApiUrl + authRouteGroup + '/login',
+    authCheck : beApiUrl + authRouteGroup + '/check',
+    refreshToken : beApiUrl + authRouteGroup + '/refresh'
 }

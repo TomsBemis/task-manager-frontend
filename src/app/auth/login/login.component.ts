@@ -1,8 +1,10 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { LoginCredentials } from '../user.model';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-login',
@@ -12,9 +14,6 @@ import { Router } from '@angular/router';
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
-  providers: [
-    AuthService
-  ],
 })
 export class LoginComponent implements OnDestroy {
   loginTaskForm: FormGroup = new FormGroup({
@@ -24,25 +23,31 @@ export class LoginComponent implements OnDestroy {
   loginSubscription : Subscription = new Subscription();
   loginErrorMessage : string = "";
 
-  constructor(private authService : AuthService, private router: Router) {}
+  constructor(
+    private authService : AuthService, 
+    private router: Router,
+    private cookieService: CookieService
+  ) {}
 
   ngOnDestroy(): void {
     this.loginSubscription.unsubscribe();
   }
 
-  onLogin() {
-    this.loginSubscription = this.authService.login({
-      username : this.loginTaskForm.get('username')?.value,
-      password : this.loginTaskForm.get('password')?.value
-    }).subscribe(responseData => {
-      if(responseData.body){
-        localStorage.setItem('loggedIn',"true");
-        localStorage.setItem('userId',responseData.body.user.id);
-        localStorage.setItem('sessionToken',responseData.body.token);
+  onLogin(loginTaskForm: LoginCredentials) {
+    
+    this.loginSubscription = this.authService.login(loginTaskForm).subscribe({
+      next : (response) => {
+
+        this.authService.currentUserSubject.next(response.user);
+        this.cookieService.set('loggedIn',"true");
+        this.cookieService.set('userId',response.user.id);
+        this.cookieService.set('refreshToken', response.refreshToken);
+        this.cookieService.set('accessToken', response.accessToken);
+        this.router.navigate(['/tasks'])
+      },
+      error : responseError => {
+        this.loginErrorMessage = responseError.error.message;
       }
-      this.router.navigate(['/tasks'])
-    }, responseError => {
-      this.loginErrorMessage = responseError.error.message;
     });
   }
 }

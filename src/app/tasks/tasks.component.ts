@@ -12,9 +12,6 @@ import { NavComponent } from '../shared/nav/nav.component';
     RouterLinkActive,
     NavComponent
   ],
-  providers: [
-    TaskService
-  ],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.scss'
 })
