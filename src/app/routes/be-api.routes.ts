@@ -7,6 +7,7 @@ export const beApiRoutes = {
     essentialTaskData : beApiUrl + taskRouteGroup + '/essential-task-data',
     tasks : beApiUrl + taskRouteGroup,
     login : beApiUrl + authRouteGroup + '/login',
+    logout : beApiUrl + authRouteGroup + '/logout',
     authCheck : beApiUrl + authRouteGroup + '/check',
     refreshToken : beApiUrl + authRouteGroup + '/refresh'
 }

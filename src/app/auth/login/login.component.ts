@@ -37,10 +37,9 @@ export class LoginComponent implements OnDestroy {
     
     this.loginSubscription = this.authService.login(loginTaskForm).subscribe({
       next : (response) => {
-
         this.authService.currentUserSubject.next(response.user);
         this.cookieService.set('loggedIn',"true");
-        this.cookieService.set('userId',response.user.id);
+        this.cookieService.set('userId',response.user._id);
         this.cookieService.set('refreshToken', response.refreshToken);
         this.cookieService.set('accessToken', response.accessToken);
         this.router.navigate(['/tasks'])

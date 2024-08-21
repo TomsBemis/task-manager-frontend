@@ -1,5 +1,5 @@
 export interface User {
-    id: string,
+    _id: string,
     username: string,
     password: string,
     firstName: string,
@@ -9,6 +9,12 @@ export interface User {
 export interface LoginCredentials { 
     username : string, 
     password : string
+}
+
+export interface LogoutCredentials { 
+    username : string, 
+    password : string,
+    refreshToken: string
 }
 
 export interface AuthResponse {

@@ -1,9 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { User } from '../../auth/user.model';
-import { Subscription } from 'rxjs';
+import { first, Subscription, tap } from 'rxjs';
 
 @Component({
   selector: 'app-nav',
@@ -24,9 +24,17 @@ export class NavComponent implements OnDestroy{
     this.currentUser = user;
   }) 
 
-  constructor(private authService : AuthService) {}
+  constructor(private authService : AuthService, private router: Router) {}
 
   ngOnDestroy(): void {
     this.currentUserSubscription.unsubscribe();
+  }
+
+  onLogout(){
+    this.authService.logout().subscribe({
+      next() {},
+      error(errorMessage) { console.log(errorMessage); }
+    });
+    this.router.navigate(['/login']);
   }
 }

@@ -2,7 +2,7 @@ import { HttpClient, HttpResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { beApiRoutes } from "../routes/be-api.routes";
 import { first, tap } from "rxjs/operators";
-import { LoginCredentials, AuthResponse, User } from "./user.model";
+import { LoginCredentials, AuthResponse, User, LogoutCredentials } from "./user.model";
 import { BehaviorSubject, Observable } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
 
@@ -19,6 +19,28 @@ export class AuthService {
             beApiRoutes.login, 
             userCredentials
         );
+    }
+
+    public logout(): Observable<HttpResponse<AuthResponse>> {
+        let logoutCredentials : LogoutCredentials = {
+            username : this.currentUserSubject.getValue()?.username ?? "",
+            password : this.currentUserSubject.getValue()?.password ?? "",
+            refreshToken : this.cookieService.get('refreshToken')
+        }
+        return this.httpClient.post<AuthResponse>(
+            beApiRoutes.logout, 
+            logoutCredentials,
+            { observe: 'response' }
+        ).pipe(first(), tap(response => {
+            if (response.ok) {
+                this.cookieService.delete('refreshToken');
+                this.cookieService.delete('accessToken');
+                this.cookieService.delete('userId');
+                this.cookieService.delete('loggedIn');
+                this.currentUserSubject.next(null);
+            }
+            return response
+        }));
     }
 
     public getNewAccessToken(): Observable<HttpResponse<AuthResponse>> {
