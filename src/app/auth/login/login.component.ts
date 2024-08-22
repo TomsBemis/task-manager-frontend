@@ -39,12 +39,13 @@ export class LoginComponent implements OnDestroy {
       next : (response) => {
         this.authService.currentUserSubject.next(response.user);
         this.cookieService.set('loggedIn',"true");
-        this.cookieService.set('userId',response.user._id);
-        this.cookieService.set('refreshToken', response.refreshToken);
-        this.cookieService.set('accessToken', response.accessToken);
+        this.cookieService.set('userId',response.authentication.userId);
+        this.cookieService.set('refreshToken', response.authentication.refreshToken);
+        this.cookieService.set('accessToken', response.authentication.accessToken);
         this.router.navigate(['/tasks'])
       },
       error : responseError => {
+        console.log(responseError);
         this.loginErrorMessage = responseError.error.message;
       }
     });

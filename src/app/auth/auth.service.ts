@@ -2,7 +2,7 @@ import { HttpClient, HttpResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { beApiRoutes } from "../routes/be-api.routes";
 import { first, tap } from "rxjs/operators";
-import { LoginCredentials, AuthResponse, User, LogoutCredentials } from "./user.model";
+import { LoginCredentials, AuthCredentials, User, LogoutCredentials, LoginResponse } from "./user.model";
 import { BehaviorSubject, Observable } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
 
@@ -14,20 +14,20 @@ export class AuthService {
 
     constructor (private cookieService: CookieService, private httpClient: HttpClient) {}
 
-    public login(userCredentials : LoginCredentials): Observable<AuthResponse> {
-        return this.httpClient.post<AuthResponse>(
+    public login(userCredentials : LoginCredentials): Observable<LoginResponse> {
+        return this.httpClient.post<LoginResponse>(
             beApiRoutes.login, 
             userCredentials
         );
     }
 
-    public logout(): Observable<HttpResponse<AuthResponse>> {
+    public logout(): Observable<HttpResponse<AuthCredentials>> {
         let logoutCredentials : LogoutCredentials = {
             username : this.currentUserSubject.getValue()?.username ?? "",
             password : this.currentUserSubject.getValue()?.password ?? "",
             refreshToken : this.cookieService.get('refreshToken')
         }
-        return this.httpClient.post<AuthResponse>(
+        return this.httpClient.post<AuthCredentials>(
             beApiRoutes.logout, 
             logoutCredentials,
             { observe: 'response' }
@@ -43,12 +43,12 @@ export class AuthService {
         }));
     }
 
-    public getNewAccessToken(): Observable<HttpResponse<AuthResponse>> {
+    public getNewAccessToken(): Observable<HttpResponse<AuthCredentials>> {
         const refreshToken = this.cookieService.get('refreshToken');
         if(!refreshToken) {
             throw Error("Missing refresh token");
         };
-        return this.httpClient.post<AuthResponse>(
+        return this.httpClient.post<AuthCredentials>(
             beApiRoutes.refreshToken, 
             refreshToken,
             { observe: 'response' }

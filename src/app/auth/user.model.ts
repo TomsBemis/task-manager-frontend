@@ -17,8 +17,13 @@ export interface LogoutCredentials {
     refreshToken: string
 }
 
-export interface AuthResponse {
+export interface AuthCredentials {
     accessToken: string,
     refreshToken: string,
+    userId: string,
+}
+
+export interface LoginResponse {
     user: User,
+    authentication: AuthCredentials,
 }

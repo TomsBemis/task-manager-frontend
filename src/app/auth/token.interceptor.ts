@@ -4,6 +4,8 @@ import { catchError, Observable, switchMap, throwError } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthService } from './auth.service';
 
+import { Provider } from '@angular/core';
+
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
 
@@ -13,25 +15,47 @@ export class TokenInterceptor implements HttpInterceptor {
     
     // Get session token and append it to the header
     const accessToken = this.cookieService.get("accessToken");
-    if (accessToken) this.appendAccessToken(request, accessToken);
+    let newRequest;
+    if (accessToken) {
+      newRequest = this.appendAccessToken(request, accessToken);
+      if (newRequest) {
+        return next.handle(newRequest).pipe(
+          catchError((error) => {
+            // Check if the error is due to an expired access token
+            if (error.status === 401 && accessToken) {
+              return this.handleExpiredAccessToken(request, next);
+            }
     
-    return next.handle(request).pipe(
-      catchError((error) => {
-        // Check if the error is due to an expired access token
-        if (error.status === 401 && accessToken) {
-          return this.handleExpiredAccessToken(request, next);
-        }
+            return throwError(error);
+          })
+        );
+      }
+    }
+    
+    return next.handle(request);
+    
+    // return next.handle(request).pipe(
+    //   catchError((error) => {
+    //     // Check if the error is due to an expired access token
+    //     if (error.status === 401 && accessToken) {
+    //       return this.handleExpiredAccessToken(request, next);
+    //     }
 
-        return throwError(error);
-      })
-    );
+    //     return throwError(error);
+    //   })
+    // );
     
   }
 
   private appendAccessToken(request: HttpRequest<any>, accessToken: string): HttpRequest<any> {
+    let authenticationCredentials : AuthCredentials = {
+      accessToken: this.cookieService.get('accessToken'),
+      refreshToken: this.cookieService.get('refreshToken'),
+      userId: this.cookieService.get('userId') 
+    }
     return request = request.clone({
       setHeaders: {
-        authorization: accessToken
+        authorization: JSON.stringify(authenticationCredentials)
       }
     });
   }
@@ -52,3 +76,11 @@ export class TokenInterceptor implements HttpInterceptor {
     );
   }
 }
+
+// Injection token for the Http Interceptors multi-provider
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthCredentials } from './user.model';
+
+/** Provider for the Noop Interceptor. */
+export const tokenInterceptorProvider: Provider =
+  { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true };
