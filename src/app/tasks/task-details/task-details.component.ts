@@ -109,6 +109,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
           status: new FormControl(this.task?.status?.value, Validators.required)
         });
       });
+
   }
 
   validateTitleUnique(control: FormControl): {[s: string]: boolean} | null {
