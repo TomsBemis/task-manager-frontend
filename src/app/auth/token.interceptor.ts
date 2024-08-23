@@ -34,17 +34,6 @@ export class TokenInterceptor implements HttpInterceptor {
     
     return next.handle(request);
     
-    // return next.handle(request).pipe(
-    //   catchError((error) => {
-    //     // Check if the error is due to an expired access token
-    //     if (error.status === 401 && accessToken) {
-    //       return this.handleExpiredAccessToken(request, next);
-    //     }
-
-    //     return throwError(error);
-    //   })
-    // );
-    
   }
 
   private appendAccessToken(request: HttpRequest<any>, accessToken: string): HttpRequest<any> {
