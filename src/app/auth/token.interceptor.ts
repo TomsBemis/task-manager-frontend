@@ -3,48 +3,53 @@ import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/c
 import { catchError, Observable, switchMap, throwError } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthService } from './auth.service';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 import { Provider } from '@angular/core';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
 
-  constructor(private cookieService: CookieService, private authService: AuthService) {}
+  constructor(
+    private cookieService: CookieService, 
+    private authService: AuthService, 
+    private router: Router
+  ) {}
   
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     
     // Get session token and append it to the header
-    const accessToken = this.cookieService.get("accessToken");
     let newRequest;
-    if (accessToken) {
-      newRequest = this.appendAccessToken(request, accessToken);
-      if (newRequest) {
-        return next.handle(newRequest).pipe(
-          catchError((error) => {
-            // Check if the error is due to an expired access token
-            if (error.status === 401 && accessToken) {
-              return this.handleExpiredAccessToken(request, next);
-            }
-    
-            return throwError(error);
-          })
-        );
-      }
+    try {
+      newRequest = this.appendAccessToken(request);
+      return next.handle(newRequest).pipe(
+        catchError((error) => {
+          // Check if the error is due to an expired access token
+          if (error.status === 401) {
+            return this.handleExpiredAccessToken(request, next);
+          }
+  
+          return throwError(error);
+        })
+      );
     }
-    
+    catch (error) {
+      // Redirect to login page because access token cookie is missing
+      this.router.navigate(['/login']);
+    }
     return next.handle(request);
-    
+   
   }
 
-  private appendAccessToken(request: HttpRequest<any>, accessToken: string): HttpRequest<any> {
-    let authenticationCredentials : AuthCredentials = {
-      accessToken: this.cookieService.get('accessToken'),
-      refreshToken: this.cookieService.get('refreshToken'),
-      userId: this.cookieService.get('userId') 
-    }
+  private appendAccessToken(request: HttpRequest<any>): HttpRequest<any> {
+    const fetchedAccessToken = this.cookieService.get("accessToken");
+
+    if(!fetchedAccessToken) throw Error("Access token not found in cookies");
+    
     return request = request.clone({
       setHeaders: {
-        authorization: JSON.stringify(authenticationCredentials)
+        access_token: fetchedAccessToken
       }
     });
   }
@@ -53,9 +58,8 @@ export class TokenInterceptor implements HttpInterceptor {
     // Call the refresh token endpoint to get a new access token
     return this.authService.getNewAccessToken().pipe(
       switchMap(() => {
-        const newAccessToken = this.cookieService.get("accessToken");
         // Retry the original request with the new access token
-        return next.handle(this.appendAccessToken(request, newAccessToken));
+        return next.handle(this.appendAccessToken(request));
       }),
       catchError((error) => {
         // Handle refresh token error (e.g., redirect to login page)
@@ -66,10 +70,6 @@ export class TokenInterceptor implements HttpInterceptor {
   }
 }
 
-// Injection token for the Http Interceptors multi-provider
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthCredentials } from '../users/user.model';
-
-/** Provider for the Noop Interceptor. */
+/** Provider for the token Interceptor. */
 export const tokenInterceptorProvider: Provider =
   { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true };

@@ -21,7 +21,6 @@ export class NavComponent implements OnDestroy{
 
   currentUser: User | null = null;
   currentUserSubscription: Subscription = this.authService.currentUser$.subscribe(user => {
-    console.log(user);
     this.currentUser = user;
   }) 
 
