@@ -1,0 +1,7 @@
+<ul class="list-group">
+    @for (user of userList | async; track user) {
+        <li class="list-group-item">
+            <app-user-item [userItem]="user"></app-user-item>
+        </li>
+    }
+</ul>

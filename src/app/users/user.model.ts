@@ -1,9 +1,12 @@
+import { Option } from "../shared/option.model"
+
 export interface User {
-    _id: string,
+    id: string,
     username: string,
     password: string,
     firstName: string,
     lastName: string,
+    role: Option
 }
 
 export interface LoginCredentials { 

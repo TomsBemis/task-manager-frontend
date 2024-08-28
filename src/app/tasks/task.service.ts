@@ -1,4 +1,5 @@
-import { Task, Option, BasicTask, TaskData } from "./task.model";
+import { Task, BasicTask, TaskData } from "./task.model";
+import { Option } from "../shared/option.model";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { beApiRoutes } from "../routes/be-api.routes";

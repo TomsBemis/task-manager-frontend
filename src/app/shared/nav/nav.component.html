@@ -22,9 +22,7 @@
         <div class="collapse navbar-collapse">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <div class="nav-link">
-                Welcome {{currentUser.firstName + ' ' + currentUser.lastName}}
-              </div>
+              <span class="nav-link">Welcome <a class="nav-link d-inline" [routerLink]="['/users', currentUser.id]">{{currentUser.firstName + ' ' + currentUser.lastName}}</a></span> 
             </li>
           </ul>
         </div>

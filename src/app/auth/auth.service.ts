@@ -2,7 +2,7 @@ import { HttpClient, HttpResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { beApiRoutes } from "../routes/be-api.routes";
 import { first, tap } from "rxjs/operators";
-import { LoginCredentials, AuthCredentials, User, LogoutCredentials, LoginResponse } from "./user.model";
+import { LoginCredentials, AuthCredentials, User, LogoutCredentials, LoginResponse } from "../users/user.model";
 import { BehaviorSubject, Observable } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
 

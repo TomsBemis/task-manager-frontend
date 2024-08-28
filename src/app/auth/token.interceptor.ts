@@ -68,7 +68,7 @@ export class TokenInterceptor implements HttpInterceptor {
 
 // Injection token for the Http Interceptors multi-provider
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthCredentials } from './user.model';
+import { AuthCredentials } from '../users/user.model';
 
 /** Provider for the Noop Interceptor. */
 export const tokenInterceptorProvider: Provider =

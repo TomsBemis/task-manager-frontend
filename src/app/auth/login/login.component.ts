@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { LoginCredentials } from '../user.model';
+import { LoginCredentials } from '../../users/user.model';
 import { CookieService } from 'ngx-cookie-service';
 
 @Component({

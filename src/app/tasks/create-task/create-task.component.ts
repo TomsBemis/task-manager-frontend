@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Option } from '../task.model';
+import { Option } from '../../shared/option.model';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskService } from '../task.service';
 import { KeyValuePipe } from '@angular/common';

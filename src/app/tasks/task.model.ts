@@ -1,8 +1,4 @@
-// Data structure used for TaskType and TaskStatus attributes
-export type Option = {
-    value: string,
-    displayName: string
-}
+import { Option } from '../shared/option.model';
 
 export interface Task {
     id: number,
