@@ -31,14 +31,10 @@ export class TaskListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // If task list is empty then try to initialize
-    if(this.taskList.getValue().length === 0) {
-      this.getEssentialDataSubscription = this.taskService.getEssentialData().subscribe(
-        essentialData => {
-          this.taskList.next(essentialData.tasks);
-        }
-      )
-    }
+    this.getEssentialDataSubscription = this.taskService.getEssentialData().subscribe(
+      essentialData => {
+      this.taskList.next(essentialData.tasks);
+    });
   }
 
   onDeleted(taskId: number) {

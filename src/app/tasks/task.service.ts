@@ -26,8 +26,8 @@ export class TaskService{
             }));
     }
 
-    public getTasks() : Observable<Task[]> {
-        return this.httpClient.get<Task[]>(beApiRoutes.tasks).pipe(
+    public getTasks() : Observable<BasicTask[]> {
+        return this.httpClient.get<BasicTask[]>(beApiRoutes.tasks).pipe(
             first(),
             tap(responseTasks => {
                 this.basicTasksSubject.next(responseTasks.sort(
