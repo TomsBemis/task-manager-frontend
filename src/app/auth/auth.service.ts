@@ -21,26 +21,18 @@ export class AuthService {
         );
     }
 
-    public logout(): Observable<HttpResponse<AuthCredentials>> {
-        let logoutCredentials : LogoutCredentials = {
-            username : this.currentUserSubject.getValue()?.username ?? "",
-            password : this.currentUserSubject.getValue()?.password ?? "",
-            refreshToken : this.cookieService.get('refreshToken')
-        }
-        return this.httpClient.post<AuthCredentials>(
-            beApiRoutes.logout, 
-            logoutCredentials,
-            { observe: 'response' }
-        ).pipe(first(), tap(response => {
-            if (response.ok) {
+    public logout(): Observable<HttpResponse<void>> {
+        return this.httpClient.get<HttpResponse<void>>(beApiRoutes.logout).pipe(
+            first(),
+            tap(() => {
                 this.cookieService.delete('refreshToken');
                 this.cookieService.delete('accessToken');
                 this.cookieService.delete('userId');
                 this.cookieService.delete('loggedIn');
                 this.currentUserSubject.next(null);
-            }
-            return response
-        }));
+                return;
+            })
+        );
     }
 
     public getNewAccessToken(): Observable<HttpResponse<AuthCredentials>> {
