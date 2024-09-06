@@ -4,10 +4,13 @@ import { provideRouter } from '@angular/router';
 import { appRoutes as appRoutes } from './routes/app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
+import { tokenInterceptorProvider } from './auth/token.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     importProvidersFrom(HttpClientModule),
     provideRouter(appRoutes), 
-    provideClientHydration()]
+    provideClientHydration(),
+    tokenInterceptorProvider,
+  ]
 };

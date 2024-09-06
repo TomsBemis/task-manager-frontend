@@ -4,7 +4,7 @@ import { HttpClient } from "@angular/common/http";
 import { beApiRoutes } from "../routes/be-api.routes";
 import { BehaviorSubject, first, Observable, tap } from 'rxjs';
 
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class TaskService{
     
     private taskTypes : Option[] = [];
@@ -14,7 +14,7 @@ export class TaskService{
 
     constructor(private httpClient: HttpClient) {}
 
-public getEssentialData() : Observable<TaskData> {
+    public getEssentialData() : Observable<TaskData> {
         // Get task types, task statuses and tasks from DB
         return this.httpClient.get<TaskData>(beApiRoutes.essentialTaskData).pipe(
             first(),
@@ -38,7 +38,7 @@ public getEssentialData() : Observable<TaskData> {
     }
 
     public getTask(taskId: number): Observable<Task | null> {
-        return this.httpClient.get<Task | null>(beApiRoutes.taskDetails + taskId);
+        return this.httpClient.get<Task | null>(beApiRoutes.tasks + "/" + taskId);
     }
 
     public addTask(task: Task): Observable<Task | null>{
@@ -57,7 +57,7 @@ public getEssentialData() : Observable<TaskData> {
 
 public updateTask(taskId: number, editedTask: Task) : Observable<Task | null>{
         // Update the task if the ids match
-        return this.httpClient.patch<Task | null>(beApiRoutes.taskDetails + taskId, editedTask)
+        return this.httpClient.patch<Task | null>(beApiRoutes.tasks + "/" + taskId, editedTask)
         .pipe(
             first(),
             tap(updatedTask => {
@@ -72,7 +72,7 @@ public updateTask(taskId: number, editedTask: Task) : Observable<Task | null>{
     }
 
     public deleteTask(taskId: number) : Observable<BasicTask[]> {
-        return this.httpClient.delete<BasicTask[]>(beApiRoutes.taskDetails + taskId);
+        return this.httpClient.delete<BasicTask[]>(beApiRoutes.tasks + "/" + taskId);
     }
 
     public getTaskTypes() {
