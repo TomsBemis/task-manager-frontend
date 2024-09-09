@@ -45,7 +45,6 @@ export class LoginComponent implements OnDestroy {
         this.router.navigate(['/tasks'])
       },
       error : responseError => {
-        console.log(responseError);
         this.loginErrorMessage = responseError.error.message;
       }
     });

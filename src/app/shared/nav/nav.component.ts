@@ -2,8 +2,8 @@ import { Component, OnDestroy } from '@angular/core';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { User } from '../../users/user.model';
-import { Subscription } from 'rxjs';
+import { User } from '../../auth/user.model';
+import { BehaviorSubject, first, Observable, Subscription, tap } from 'rxjs';
 
 @Component({
   selector: 'app-nav',
@@ -17,20 +17,12 @@ import { Subscription } from 'rxjs';
   templateUrl: './nav.component.html',
   styleUrl: './nav.component.scss'
 })
-export class NavComponent implements OnDestroy{
+export class NavComponent {
 
-  currentUser: User | null = null;
-  currentUserSubscription: Subscription = this.authService.currentUser$.subscribe(user => {
-    this.currentUser = user;
-  });
-  logoutSubscription: Subscription = new Subscription();
+  currentUser = this.authService.currentUserSubject;
+  currentUser$ = this.authService.currentUserSubject.asObservable();
 
-  constructor(private authService: AuthService, private router: Router) {}
-
-  ngOnDestroy(): void {
-    this.currentUserSubscription.unsubscribe();
-    this.logoutSubscription.unsubscribe();
-  }
+  constructor(private authService : AuthService, private router: Router) {}
 
   onLogout(){
     try {

@@ -35,20 +35,17 @@ export class AuthService {
         );
     }
 
-    public getNewAccessToken(): Observable<HttpResponse<AuthCredentials>> {
+    public getNewAccessToken(): Observable<AuthCredentials> {
         const refreshToken = this.cookieService.get('refreshToken');
         if(!refreshToken) {
             throw Error("Missing refresh token");
         };
         return this.httpClient.post<AuthCredentials>(
             beApiRoutes.refreshToken, 
-            refreshToken,
-            { observe: 'response' }
+            refreshToken
         ).pipe(first(), tap(response => {
-            if (response.ok) {
-                this.cookieService.set('refreshToken', response.body?.refreshToken ?? "");
-                this.cookieService.set('accessToken', response.body?.accessToken ?? "");
-            }
+            this.cookieService.set('refreshToken', response.refreshToken);
+            this.cookieService.set('accessToken', response.accessToken);
             return response;
         }));
     }
