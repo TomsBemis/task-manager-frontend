@@ -12,8 +12,46 @@
                     <div class="row">
                         <span>Role: {{user.role.displayName}} </span>
                     </div>
+                    @if (!this.editMode) {
+                        <div class="row d-flex flex-row-reverse">
+                            <div class="col-1">
+                                <button class="btn btn-secondary" (click)="toggleEditMode()">Edit</button>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
+            @if (this.editMode) {
+                <form  (ngSubmit)="onSubmit()">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group row">
+                                <label class="col-sm-1 col-form-label" for="roles">Roles:</label>
+                                <div class="col-sm-11">
+                                    @for (role of allRoles; track role; let i = $index;) {
+                                        <div class="form-check form-switch">
+                                            <input 
+                                                class="form-check-input" 
+                                                type="checkbox"
+                                                [id]="role.value"
+                                                [name]="role.value"
+                                                [disabled]="rolesCheckboxAttributes[role.value].disabled"
+                                                [checked]="rolesCheckboxAttributes[role.value].checked"
+                                                (change)="onRoleChange($event, role.value)">
+                                            <label class="form-check-label" for="flexSwitchCheckDefault">{{role.displayName}}</label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row d-flex flex-row-reverse">
+                        <div class="col-1">
+                            <input class="form-control" class="btn btn-primary" type="submit" value="Save">
+                        </div>
+                    </div>
+                </form>
+            }
         </div>
     }
 </div>

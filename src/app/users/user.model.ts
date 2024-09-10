@@ -30,3 +30,23 @@ export interface LoginResponse {
     user: User,
     authentication: AuthCredentials,
 }
+
+export interface UserRole {
+    role: Option, 
+    enabled: boolean
+}
+
+export const initialRoles: Option[] = [
+    {
+        value: "USER",
+        displayName: "Regular user"
+    },
+    {
+        value: "MANAGER",
+        displayName: "Manager"
+    },
+    {
+        value: "ADMIN",
+        displayName: "Administrator"
+    }
+];
