@@ -4,7 +4,6 @@ import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { LoginCredentials } from '../../users/user.model';
-import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-login',
@@ -25,8 +24,7 @@ export class LoginComponent implements OnDestroy {
 
   constructor(
     private authService : AuthService, 
-    private router: Router,
-    private cookieService: CookieService
+    private router: Router
   ) {}
 
   ngOnDestroy(): void {
@@ -37,11 +35,6 @@ export class LoginComponent implements OnDestroy {
     
     this.loginSubscription = this.authService.login(loginTaskForm).subscribe({
       next : (response) => {
-        this.authService.currentUserSubject.next(response.user);
-        this.cookieService.set('loggedIn',"true");
-        this.cookieService.set('userId',response.authentication.userId);
-        this.cookieService.set('refreshToken', response.authentication.refreshToken);
-        this.cookieService.set('accessToken', response.authentication.accessToken);
         this.router.navigate(['/tasks'])
       },
       error : responseError => {

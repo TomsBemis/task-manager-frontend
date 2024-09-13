@@ -18,6 +18,15 @@ export class AuthService {
         return this.httpClient.post<LoginResponse>(
             beApiRoutes.login, 
             userCredentials
+        ).pipe(
+            first(),
+            tap((response) => {
+                this.currentUserSubject.next(response.user);
+                this.cookieService.set('loggedIn',"true");
+                this.cookieService.set('userId',response.authentication.userId);
+                this.cookieService.set('refreshToken', response.authentication.refreshToken);
+                this.cookieService.set('accessToken', response.authentication.accessToken);
+            })
         );
     }
 
