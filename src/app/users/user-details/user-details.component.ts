@@ -6,6 +6,7 @@ import { FormsModule }   from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { map, Subscription, switchMap, take } from 'rxjs';
 import { Option } from '../../shared/option.model';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-user-details',
@@ -20,27 +21,41 @@ import { Option } from '../../shared/option.model';
 export class UserDetailsComponent implements OnInit, OnDestroy {
 
   user: User | null = null;
-  allRoles: Option[] = initialRoles;
+  allRoles: Option[] = [];
   rolesCheckboxAttributes: {[key: string]: {
     checked: boolean,
     disabled: boolean
   }} = {};
+  roleEditable: boolean = false;
   editMode: boolean = false;
   updateUserSubscription = new Subscription();
 
-  constructor(private route: ActivatedRoute, private userService: UserService, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute, 
+    private userService: UserService, 
+    private router: Router, 
+    private authService: AuthService
+  ) {}
   
   ngOnInit(): void {
-    // Get user id from route parameters then pass it as argument for user service
-    // set the component task when async method is done
+    
     this.route.params.pipe(
-      map(params => params['id'] as string),
+      map(params => params['userId'] as string),
       switchMap(userId => {
         return this.userService.getUserById(userId)
       }),
       take(1)
     ).subscribe(responseUser => { 
+
       this.user = responseUser;
+
+      // Check if logged in user is admin, or if not then compare ids
+      let loggedInUser = this.authService.currentUserSubject.getValue();
+      if(loggedInUser){
+        if(loggedInUser.role.value == "ADMIN") this.roleEditable = true;
+        else if(loggedInUser?.id != responseUser.id) throw Error("Only users with administrator priviledges or users owners have access.")
+      }
+      
       this.rolesCheckboxAttributes = {
         'USER': {
           checked: true,
@@ -56,6 +71,8 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         }
       }
     });
+    
+    for (let key in initialRoles) this.allRoles.push(initialRoles[key]);
   }
   
   ngOnDestroy(): void {
@@ -71,7 +88,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     // Get filled out form data using form group
     let selectedRoles: UserRole[] = [];
     
-    initialRoles.forEach(roleItem => {
+    this.allRoles.forEach(roleItem => {
       selectedRoles.push({
         role: roleItem,
         enabled: this.rolesCheckboxAttributes[roleItem.value].checked

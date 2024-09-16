@@ -28,7 +28,7 @@
           <ul class="navbar-nav">
             <li class="nav-item">
               <div class="nav-link">
-                Welcome {{currentUser.getValue()?.firstName + ' ' + currentUser.getValue()?.lastName}}
+                <a class="nav-link" [routerLink]="['/users', currentUser.getValue()?.id]">Welcome {{currentUser.getValue()?.firstName + ' ' + currentUser.getValue()?.lastName}}</a>
               </div>
             </li>
           </ul>
@@ -41,11 +41,11 @@
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav">
           <li class="nav-item">
-            @if(!currentUser$) {
-              <a class="nav-link" routerLink="/login">Login</a>
+            @if(currentUser$ | async) {
+              <a class="nav-link" (click)="onLogout()">Logout</a>
             }
             @else {
-              <a class="nav-link" (click)="onLogout()">Logout</a>
+              <a class="nav-link" routerLink="/login">Login</a>
             }
           </li>
         </ul>

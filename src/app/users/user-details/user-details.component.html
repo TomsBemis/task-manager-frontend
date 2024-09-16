@@ -12,7 +12,7 @@
                     <div class="row">
                         <span>Role: {{user.role.displayName}} </span>
                     </div>
-                    @if (!this.editMode) {
+                    @if (!this.editMode && this.roleEditable) {
                         <div class="row d-flex flex-row-reverse">
                             <div class="col-1">
                                 <button class="btn btn-secondary" (click)="toggleEditMode()">Edit</button>

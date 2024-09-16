@@ -36,17 +36,17 @@ export interface UserRole {
     enabled: boolean
 }
 
-export const initialRoles: Option[] = [
-    {
+export const initialRoles: {[key: string]: Option} = {
+    USER: {
         value: "USER",
         displayName: "Regular user"
     },
-    {
+    MANAGER: {
         value: "MANAGER",
         displayName: "Manager"
     },
-    {
+    ADMIN: {
         value: "ADMIN",
         displayName: "Administrator"
     }
-];
+};

@@ -3,7 +3,7 @@ import { CreateTaskComponent } from '../tasks/create-task/create-task.component'
 import { TaskListComponent } from '../tasks/task-list/task-list.component';
 import { TaskDetailsComponent } from '../tasks/task-details/task-details.component';
 import { LoginComponent } from '../auth/login/login.component';
-import { authGuard } from '../auth/auth.guard';
+import { authGuard } from '../guards/auth.guard';
 import { UserDetailsComponent } from '../users/user-details/user-details.component';
 import { UserListComponent } from '../users/user-list/user-list.component';
 
@@ -15,6 +15,6 @@ export const appRoutes: Routes = [
 
     { path: 'login', component: LoginComponent },
     
-    { path: 'users/:id', component: UserDetailsComponent , canActivate: [authGuard]},
-    { path: 'users', component: UserListComponent , canActivate: [authGuard]},
+    { path: 'users/:userId', component: UserDetailsComponent, canActivate: [authGuard]},
+    { path: 'users', component: UserListComponent, canActivate: [authGuard]},
 ];
