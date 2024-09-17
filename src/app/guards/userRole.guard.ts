@@ -18,21 +18,15 @@ export const userRoleGuard = (criteriaRoles: Option[], whitelist: boolean): CanA
     }
 
     // Check if user has appropriate role
-    if(whitelist) {
-      for (let i = 0; i < criteriaRoles.length; i++) {
-        if(authenticatedUser.role.value == criteriaRoles[i].value) {
-          return true;
-        }
-      }
-      return false;
-    }
-    else {
-      for (let i = 0; i < criteriaRoles.length; i++) {
-        if(authenticatedUser.role.value == criteriaRoles[i].value) {
-          return false;
-        }
-      }
-      return true;
-    }
+    let matchingRoleFound: boolean = false;
+    
+    criteriaRoles.every(criteriaRole => {
+      if (criteriaRole.value == authenticatedUser.role.value) matchingRoleFound = true;
+    });
+
+    // If role is whitelisted and found in user's roles then allow access
+    if(whitelist) return matchingRoleFound;
+    // If role is blacklisted deny access if the user has it
+    else return !matchingRoleFound;
   }
 }
