@@ -4,13 +4,12 @@ import { User, UserRole } from "./user.model";
 import { first, map, Observable, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { beApiRoutes } from "../routes/be-api.routes";
-import { Option } from '../shared/option.model';
 
 @Injectable({ providedIn: "root" })
 export class UserService{
     
     public usersSubject = new BehaviorSubject<User[]>([]);
-    public usersObservable$ = this.usersSubject.asObservable();
+    public users$ = this.usersSubject.asObservable();
 
     constructor(private httpClient: HttpClient) {}
 
@@ -20,9 +19,9 @@ export class UserService{
             tap(responseUsers => {
                 this.usersSubject.next(responseUsers.users.sort(
                     (userA, userB) => {
-                        let userFullNameA = userA.firstName+' '+userA.lastName;
-                        let userFullNameB = userB.firstName+' '+userB.lastName;
-                        return (userFullNameA < userFullNameB) ? -1 : (userFullNameA > userFullNameB) ? 1 : 0
+                        // Compare first names, if they are the same then compare last names
+                        const firstNameComparison = userA.firstName.localeCompare(userB.firstName);
+                        return firstNameComparison !== 0 ? firstNameComparison : userA.lastName.localeCompare(userB.lastName);
                 }));
             }),
             map(response => {return response.users;})
