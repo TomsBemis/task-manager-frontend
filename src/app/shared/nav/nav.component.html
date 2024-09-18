@@ -3,7 +3,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="collapse navbar-collapse">
         <a class="navbar-brand" routerLink="/">Task Manager</a>
-        @if(currentUser$ | async) {
+        @if(currentUser$ | async; as currentUser) {
           <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link" routerLink="/tasks">Task List</a>
@@ -11,19 +11,24 @@
             <li class="nav-item">
               <a class="nav-link" routerLink="/tasks/create">Create new task</a>
             </li>
+            @if(currentUser.role.value == "ADMIN") {
+              <li class="nav-item">
+                <a class="nav-link" routerLink="/users">User list</a>
+              </li>
+            }
           </ul>
         }
       </div>
     </nav>
   </div>
   <div class="col-2">
-    @if(currentUser$ | async) {
+    @if(currentUser$ | async; as currentUser) {
       <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="collapse navbar-collapse">
           <ul class="navbar-nav">
             <li class="nav-item">
               <div class="nav-link">
-                Welcome {{currentUser.getValue()?.firstName + ' ' + currentUser.getValue()?.lastName}}
+                <a class="nav-link" [routerLink]="['/users', currentUser.id]">Welcome {{currentUser.firstName + ' ' + currentUser.lastName}}</a>
               </div>
             </li>
           </ul>
@@ -36,11 +41,11 @@
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav">
           <li class="nav-item">
-            @if(!currentUser$) {
-              <a class="nav-link" routerLink="/login">Login</a>
+            @if(currentUser$ | async; as currentUser) {
+              <a class="nav-link" (click)="onLogout()">Logout</a>
             }
             @else {
-              <a class="nav-link" (click)="onLogout()">Logout</a>
+              <a class="nav-link" routerLink="/login">Login</a>
             }
           </li>
         </ul>

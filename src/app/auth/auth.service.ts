@@ -1,8 +1,8 @@
-import { HttpClient, HttpResponse } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { beApiRoutes } from "../routes/be-api.routes";
 import { first, tap } from "rxjs/operators";
-import { LoginCredentials, AuthCredentials, User, LogoutCredentials, LoginResponse } from "./user.model";
+import { LoginCredentials, AuthCredentials, User, LoginResponse } from "../users/user.model";
 import { BehaviorSubject, Observable } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
 
@@ -18,26 +18,30 @@ export class AuthService {
         return this.httpClient.post<LoginResponse>(
             beApiRoutes.login, 
             userCredentials
+        ).pipe(
+            first(),
+            tap((response) => {
+                this.currentUserSubject.next(response.user);
+                this.cookieService.set('loggedIn',"true");
+                this.cookieService.set('userId',response.authentication.userId);
+                this.cookieService.set('refreshToken', response.authentication.refreshToken);
+                this.cookieService.set('accessToken', response.authentication.accessToken);
+            })
         );
     }
 
-    public logout(): Observable<AuthCredentials> {
-        let logoutCredentials : LogoutCredentials = {
-            username : this.currentUserSubject.getValue()?.username ?? "",
-            password : this.currentUserSubject.getValue()?.password ?? "",
-            refreshToken : this.cookieService.get('refreshToken')
-        }
-        return this.httpClient.post<AuthCredentials>(
-            beApiRoutes.logout, 
-            logoutCredentials
-        ).pipe(first(), tap(response => {
-            this.cookieService.delete('refreshToken');
-            this.cookieService.delete('accessToken');
-            this.cookieService.delete('userId');
-            this.cookieService.delete('loggedIn');
-            this.currentUserSubject.next(null);
-            return response
-        }));
+    public logout(): Observable<void> {
+        return this.httpClient.get<void>(beApiRoutes.logout).pipe(
+            first(),
+            tap(() => {
+                this.cookieService.delete('refreshToken');
+                this.cookieService.delete('accessToken');
+                this.cookieService.delete('userId');
+                this.cookieService.delete('loggedIn');
+                this.currentUserSubject.next(null);
+                return;
+            })
+        );
     }
 
     public getNewAccessToken(): Observable<AuthCredentials> {

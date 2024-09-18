@@ -1,4 +1,5 @@
-import { Task, Option, BasicTask, TaskData } from "./task.model";
+import { Task, BasicTask, TaskData } from "./task.model";
+import { Option } from "../shared/option.model";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { beApiRoutes } from "../routes/be-api.routes";
@@ -10,7 +11,7 @@ export class TaskService{
     private taskTypes : Option[] = [];
     private taskStatuses : Option[] = [];
     public basicTasksSubject = new BehaviorSubject<BasicTask[]>([]);
-    public basicTasksObservable$ = this.basicTasksSubject.asObservable();
+    public basicTasks$ = this.basicTasksSubject.asObservable();
 
     constructor(private httpClient: HttpClient) {}
 
@@ -25,8 +26,8 @@ export class TaskService{
             }));
     }
 
-    public getTasks() : Observable<Task[]> {
-        return this.httpClient.get<Task[]>(beApiRoutes.tasks).pipe(
+    public getTasks() : Observable<BasicTask[]> {
+        return this.httpClient.get<BasicTask[]>(beApiRoutes.tasks).pipe(
             first(),
             tap(responseTasks => {
                 this.basicTasksSubject.next(responseTasks.sort(

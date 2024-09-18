@@ -1,9 +1,7 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { User } from '../../auth/user.model';
-import { BehaviorSubject, first, Observable, Subscription, tap } from 'rxjs';
 
 @Component({
   selector: 'app-nav',

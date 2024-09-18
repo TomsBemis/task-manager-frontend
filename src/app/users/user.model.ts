@@ -1,9 +1,12 @@
+import { Option } from "../shared/option.model"
+
 export interface User {
-    _id: string,
+    id: string,
     username: string,
     password: string,
     firstName: string,
     lastName: string,
+    role: Option
 }
 
 export interface LoginCredentials { 
@@ -27,3 +30,23 @@ export interface LoginResponse {
     user: User,
     authentication: AuthCredentials,
 }
+
+export interface UserRole {
+    role: Option, 
+    enabled: boolean
+}
+
+export const initialRoles: {[key: string]: Option} = {
+    USER: {
+        value: "USER",
+        displayName: "Regular user"
+    },
+    MANAGER: {
+        value: "MANAGER",
+        displayName: "Manager"
+    },
+    ADMIN: {
+        value: "ADMIN",
+        displayName: "Administrator"
+    }
+};
