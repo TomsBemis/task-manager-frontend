@@ -11,7 +11,7 @@
             <li class="nav-item">
               <a class="nav-link" routerLink="/tasks/create">Create new task</a>
             </li>
-            @if(currentUser.role.value == "ADMIN") {
+            @if(currentUser.roles.includes("ADMIN")) {
               <li class="nav-item">
                 <a class="nav-link" routerLink="/users">User list</a>
               </li>

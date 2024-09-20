@@ -21,7 +21,7 @@ export const userRoleGuard = (criteriaRoles: Option[], whitelist: boolean): CanA
     let matchingRoleFound: boolean = false;
     
     criteriaRoles.every(criteriaRole => {
-      if (criteriaRole.value == authenticatedUser.role.value) matchingRoleFound = true;
+      if (criteriaRole.value == authenticatedUser.roles.value) matchingRoleFound = true;
     });
 
     // If role is whitelisted and found in user's roles then allow access

@@ -52,7 +52,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       // Check if logged in user is admin, or if not then compare ids
       let loggedInUser = this.authService.currentUserSubject.getValue();
       if(loggedInUser){
-        if(loggedInUser.role.value == "ADMIN") this.roleEditable = true;
+        if(loggedInUser.roles.includes("ADMIN")) this.roleEditable = true;
         else if(loggedInUser?.id != responseUser.id) throw Error("Only users with administrator priviledges or users owners have access.")
       }
       
@@ -62,11 +62,11 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
           disabled: true 
         },
         'MANAGER': {
-          checked: this.user?.role.value === 'MANAGER',
+          checked: this.user?.roles.includes("MANAGER"),
           disabled: false 
         },
         'ADMIN': {
-          checked: this.user?.role.value === 'ADMIN',
+          checked: this.user?.roles.includes("ADMIN"),
           disabled: true
         }
       }
@@ -110,5 +110,9 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
 
   onRoleChange(event: any, role: string) {
     this.rolesCheckboxAttributes[role].checked = event.target.checked;
+  }
+
+  getRoleNames(roles: any){
+    return roles.map((role: any) => role.displayName);
   }
 }
