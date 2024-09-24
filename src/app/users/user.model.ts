@@ -9,6 +9,13 @@ export interface User {
     roles: string[]
 }
 
+export interface UserData {
+    id: string,
+    firstName: string,
+    lastName: string,
+    roles: Option[]
+}
+
 export interface LoginCredentials { 
     username : string, 
     password : string

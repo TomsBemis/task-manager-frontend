@@ -53,7 +53,8 @@ export class CreateTaskComponent implements OnDestroy {
         taskStatus.value == this.createTaskForm.get('status')?.value
       ) as Option,
       updatedAt: new Date(),
-      createdAt: new Date()
+      createdAt: new Date(),
+      assignedUser: null
     }).subscribe(createdTask => {
       if(createdTask) this.router.navigate(['/tasks', createdTask.id]);
     });

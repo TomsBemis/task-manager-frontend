@@ -5,7 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TaskService } from '../task.service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DatePipe, KeyValuePipe } from '@angular/common';
-import { map, Subscription, switchMap, take } from 'rxjs';
+import { first, map, Subscription, switchMap, take, tap } from 'rxjs';
+import { UserData } from '../../users/user.model';
 
 @Component({
   selector: 'app-task-details',
@@ -24,6 +25,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   editMode: boolean = false;
   taskTypes : Option[] = this.taskService.getTaskTypes();
   taskStatuses : Option[] = this.taskService.getTaskStatuses();
+  assignableUsers: UserData[] = [];
   deleteTaskSubscription = new Subscription();
   updateTaskSubscription = new Subscription();
 
@@ -34,7 +36,8 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     ]),
     description: new FormControl(),
     type: new FormControl(),
-    status: new FormControl()
+    status: new FormControl(),
+    assignedUser: new FormControl()
   });
 
   onDeleted(taskId: number) {
@@ -66,6 +69,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
           ) as Option,
           updatedAt: new Date(),
           createdAt: this.task.createdAt,
+          assignedUser: null
         }
       ).subscribe( updatedTask => {
         if(updatedTask) {
@@ -97,8 +101,10 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
         return this.taskService.getTask(taskId)
       }),
       take(1)
-    ).subscribe(responseTask => {
-        this.task = responseTask;
+    ).subscribe(response => {
+      
+        this.task = response.task;
+        this.assignableUsers = response.assignableUsers;
 
         this.editTaskForm = new FormGroup({
           title: new FormControl(this.task?.title, [

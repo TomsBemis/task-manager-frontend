@@ -27,6 +27,12 @@
                 </div>
                 <div class="row d-flex flex-row-reverse">
                     <div class="col">
+                        @if(task.assignedUser) {
+                            <div class="row"><span>Assigned to: {{task.assignedUser.firstName + ' ' + task.assignedUser.lastName}} </span></div>
+                        }
+                        @else {
+                            <div class="row"><span>Unassigned</span></div>
+                        }
                         <div class="row"><span>Created on: {{task.createdAt | date:'MM/dd/yyyy' }} </span></div>
                         <div class="row"><span>Last modified: {{task.updatedAt |  date:'MM/dd/yyyy'}} </span></div>
                     </div>

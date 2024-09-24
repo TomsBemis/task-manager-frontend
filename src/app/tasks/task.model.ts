@@ -1,4 +1,5 @@
 import { Option } from '../shared/option.model';
+import { UserData } from '../users/user.model';
 
 export interface Task {
     id: number,
@@ -7,7 +8,8 @@ export interface Task {
     type: Option, 
     status: Option
     createdAt: Date, 
-    updatedAt: Date
+    updatedAt: Date,
+    assignedUser: UserData | null
 }
 export interface BasicTask {
     id: number,
