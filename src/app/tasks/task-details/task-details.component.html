@@ -1,45 +1,49 @@
 <div class="col">
     @if(this.task){
         <div class="card card-body">
-            <div class="row">
-                <div class="col-3">
-                    <div class="row">
-                        <div class="col">
-                            <h4 class="list-group-item-heading text-nowrap">{{ task.title }} ({{task.type.displayName}})</h4>
+            <form [formGroup]="editTaskForm" (ngSubmit)="onSubmit()">
+                <div class="row">
+                    <div class="col-3">
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="list-group-item-heading text-nowrap">{{ task.title }} ({{task.type.displayName}})</h4>
+                            </div>
+                            @if (editable) {
+                                <div class="col">
+                                    @if (!editMode) {
+                                        <button class="btn btn-secondary" (click)="toggleEditMode()">Edit</button>
+                                    }
+                                    @else {
+                                        <input class="form-control" [disabled]="!editTaskForm.valid" class="btn btn-primary" type="submit" value="Save">
+                                    }
+                                </div>
+                            }
                         </div>
+                    </div>
+                    <div class="col-11">
+                        <p class="list-group-item-text"><span class="badge bg-primary">{{task.status.displayName}}</span> {{ task.description }}</p>
+                    </div>
+                    @if (this.editable) {
+                        <div class="col-1">
+                            <button class="btn btn-danger" 
+                            (click)="this.task !== null && this.task.id !== null ? onDeleted(this.task.id) : true">
+                            Delete</button>
+                        </div>
+                    }
+                    <div class="row d-flex flex-row-reverse">
                         <div class="col">
-                            @if (editMode != true) {
-                                <button class="btn btn-secondary" (click)="toggleEditMode()">Edit</button>
+                            @if(task.assignedUser) {
+                                <div class="row"><span>Assigned to: {{task.assignedUser.firstName + ' ' + task.assignedUser.lastName}} </span></div>
                             }
                             @else {
-                                <input class="form-control" [disabled]="!editTaskForm.valid" class="btn btn-primary" type="submit" value="Save">
+                                <div class="row"><span>Unassigned</span></div>
                             }
+                            <div class="row"><span>Created on: {{task.createdAt | date:'MM/dd/yyyy' }} </span></div>
+                            <div class="row"><span>Last modified: {{task.updatedAt |  date:'MM/dd/yyyy'}} </span></div>
                         </div>
                     </div>
                 </div>
-                <div class="col-11">
-                    <p class="list-group-item-text"><span class="badge bg-primary">{{task.status.displayName}}</span> {{ task.description }}</p>
-                </div>
-                <div class="col-1">
-                    <button class="btn btn-danger" 
-                    (click)="this.task !== null && this.task.id !== null ? onDeleted(this.task.id) : true">
-                    Delete</button>
-                </div>
-                <div class="row d-flex flex-row-reverse">
-                    <div class="col">
-                        @if(task.assignedUser) {
-                            <div class="row"><span>Assigned to: {{task.assignedUser.firstName + ' ' + task.assignedUser.lastName}} </span></div>
-                        }
-                        @else {
-                            <div class="row"><span>Unassigned</span></div>
-                        }
-                        <div class="row"><span>Created on: {{task.createdAt | date:'MM/dd/yyyy' }} </span></div>
-                        <div class="row"><span>Last modified: {{task.updatedAt |  date:'MM/dd/yyyy'}} </span></div>
-                    </div>
-                </div>
-            </div>
-            @if (this.editMode) {
-                <form [formGroup]="editTaskForm" (ngSubmit)="onSubmit(this.task)">
+                @if (editable && this.editMode) {
                     <div class="row">
                         <div class="col-xs-6">
                             <div class="form-group row">
@@ -90,10 +94,22 @@
                                     }
                                 </div>
                             </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label" for="assignedUser">Assigned user</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control form-select" name="assignedUser" id="assignedUser" formControlName="assignedUser">
+                                        <option [value]="null">None</option>
+                                        @for (assignableUser of assignableUsers; track assignableUser) {
+                                            <option
+                                            [value]="assignableUser.id">{{assignableUser.firstName + ' ' + assignableUser.lastName}}</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </form>
-            }
+                }
+            </form>
         </div>
     }
     @else {

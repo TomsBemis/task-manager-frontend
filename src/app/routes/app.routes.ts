@@ -6,10 +6,11 @@ import { LoginComponent } from '../auth/login/login.component';
 import { authGuard } from '../guards/auth.guard';
 import { UserDetailsComponent } from '../users/user-details/user-details.component';
 import { UserListComponent } from '../users/user-list/user-list.component';
+import { userRoleGuard } from '../guards/userRole.guard';
 
 export const appRoutes: Routes = [
     { path: '', pathMatch: 'full', redirectTo: 'tasks'},
-    { path: 'tasks/create', component: CreateTaskComponent , canActivate: [authGuard]},
+    { path: 'tasks/create', component: CreateTaskComponent , canActivate: [authGuard, userRoleGuard(["ADMIN"],true)]},
     { path: 'tasks', component: TaskListComponent , canActivate: [authGuard]},
     { path: 'tasks/:id', component: TaskDetailsComponent , canActivate: [authGuard]},
 

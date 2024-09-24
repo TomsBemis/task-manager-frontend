@@ -4,7 +4,7 @@ import { AuthService } from "../auth/auth.service";
 import { inject } from "@angular/core";
 import { User } from "../users/user.model";
 
-export const userRoleGuard = (criteriaRoles: Option[], whitelist: boolean): CanActivateFn => {
+export const userRoleGuard = (criteriaRoles: string[], whitelist: boolean): CanActivateFn => {
   
   return async (route, state): Promise<boolean> => {
   
@@ -21,7 +21,7 @@ export const userRoleGuard = (criteriaRoles: Option[], whitelist: boolean): CanA
     let matchingRoleFound: boolean = false;
     
     criteriaRoles.every(criteriaRole => {
-      if (criteriaRole.value == authenticatedUser.roles.value) matchingRoleFound = true;
+      if (authenticatedUser.roles.includes(criteriaRole)) matchingRoleFound = true;
     });
 
     // If role is whitelisted and found in user's roles then allow access

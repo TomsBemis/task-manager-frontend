@@ -6,7 +6,8 @@ import { TaskService } from '../task.service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DatePipe, KeyValuePipe } from '@angular/common';
 import { first, map, Subscription, switchMap, take, tap } from 'rxjs';
-import { UserData } from '../../users/user.model';
+import { User, UserData } from '../../users/user.model';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-task-details',
@@ -22,6 +23,7 @@ import { UserData } from '../../users/user.model';
 export class TaskDetailsComponent implements OnInit, OnDestroy {
 
   task: Task | null = null;
+  editable: boolean = false;
   editMode: boolean = false;
   taskTypes : Option[] = this.taskService.getTaskTypes();
   taskStatuses : Option[] = this.taskService.getTaskStatuses();
@@ -51,7 +53,8 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     this.editMode = !this.editMode;
   }
   
-  onSubmit (task : Task) {
+  onSubmit () {
+
     // Get filled out form data using form group
 
     if(this.task) {
@@ -69,7 +72,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
           ) as Option,
           updatedAt: new Date(),
           createdAt: this.task.createdAt,
-          assignedUser: null
+          assignedUser: this.editTaskForm.get('assignedUser')?.value
         }
       ).subscribe( updatedTask => {
         if(updatedTask) {
@@ -82,13 +85,26 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     }    
   }
 
-  constructor(private router: Router, private route: ActivatedRoute, private taskService: TaskService) {}
+  constructor(
+    private router: Router, 
+    private route: ActivatedRoute, 
+    private taskService: TaskService,
+    private authService: AuthService
+  ) {}
+  
   ngOnDestroy(): void {
     this.deleteTaskSubscription.unsubscribe();
     this.updateTaskSubscription.unsubscribe();
   }
   
   ngOnInit(): void {
+
+    // Set task to be editable if logged in user has the admin role
+    let loggedInUser : any = this.authService.currentUserSubject.getValue();
+    if(loggedInUser) {
+      this.editable = loggedInUser.roles.map((role: Option) => {return role.value;}).includes("ADMIN");
+    }
+
     this.getCurrentTask();
   }
 
@@ -103,19 +119,20 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
       take(1)
     ).subscribe(response => {
       
-        this.task = response.task;
-        this.assignableUsers = response.assignableUsers;
+      this.task = response.task;
+      this.assignableUsers = response.assignableUsers;
 
-        this.editTaskForm = new FormGroup({
-          title: new FormControl(this.task?.title, [
-            Validators.required,
-            this.validateTitleUnique.bind(this)
-          ]), //Custom validator for unique title
-          description: new FormControl(this.task?.description),
-          type: new FormControl(this.task?.type?.value, Validators.required),
-          status: new FormControl(this.task?.status?.value, Validators.required)
-        });
+      this.editTaskForm = new FormGroup({
+        title: new FormControl(this.task?.title, [
+          Validators.required,
+          this.validateTitleUnique.bind(this)
+        ]), //Custom validator for unique title
+        description: new FormControl(this.task?.description),
+        type: new FormControl(this.task?.type?.value, Validators.required),
+        status: new FormControl(this.task?.status?.value, Validators.required),
+        assignedUser: new FormControl(this.task?.assignedUser?.id)
       });
+    });
 
   }
 
