@@ -46,66 +46,70 @@
                 @if (editable && this.editMode) {
                     <div class="row">
                         <div class="col-xs-6">
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label" for="title">Task title</label>
-                                <div class="col-sm-10">
-                                    <input class="form-control" type="text" id="title" name="title" formControlName="title">
-                                    @if (editTaskForm.get('title')?.errors) {
-                                        @if (editTaskForm.get('title')?.errors?.['required'] && editTaskForm.get('title')?.touched) {
-                                            <span class="pull-right help-block">Title is required</span>
+                            @if (userRole === "Admin") {
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="title">Task title</label>
+                                    <div class="col-sm-10">
+                                        <input class="form-control" type="text" id="title" name="title" formControlName="title">
+                                        @if (editTaskForm.get('title')?.errors) {
+                                            @if (editTaskForm.get('title')?.errors?.['required'] && editTaskForm.get('title')?.touched) {
+                                                <span class="pull-right help-block">Title is required</span>
+                                            }
+                                            @if (editTaskForm.get('title')?.errors?.['titleUnique']) {
+                                                <span class="pull-right help-block">Title already exists</span>
+                                            }
                                         }
-                                        @if (editTaskForm.get('title')?.errors?.['titleUnique']) {
-                                            <span class="pull-right help-block">Title already exists</span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="description">Task description</label>
+                                    <div class="col-sm-10">
+                                        <input class="form-control" type="text" id="description" name="description" formControlName="description">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="type">Task type</label>
+                                    <div class="col-sm-10">
+                                        <select class="form-control form-select" name="type" id="type" formControlName="type">
+                                            @for (taskType of taskTypes; track taskType) {
+                                                <option 
+                                                [value]="taskType.value">{{taskType.displayName}}</option>
+                                            }
+                                        </select>
+                                        @if (!editTaskForm.get('type')?.valid && editTaskForm.get('type')?.touched) {
+                                            <span class="pull-right help-block">Type is required</span>
                                         }
-                                    }
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label" for="description">Task description</label>
-                                <div class="col-sm-10">
-                                    <input class="form-control" type="text" id="description" name="description" formControlName="description">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label" for="type">Task type</label>
-                                <div class="col-sm-10">
-                                    <select class="form-control form-select" name="type" id="type" formControlName="type">
-                                        @for (taskType of taskTypes; track taskType) {
-                                            <option 
-                                            [value]="taskType.value">{{taskType.displayName}}</option>
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="status">Task status</label>
+                                    <div class="col-sm-10">
+                                        <select class="form-control form-select" name="status" id="status" formControlName="status">
+                                            @for (taskStatus of taskStatuses; track taskStatus) {
+                                                <option
+                                                [value]="taskStatus.value">{{taskStatus.displayName}}</option>
+                                            }
+                                        </select>
+                                        @if (!editTaskForm.get('status')?.valid && editTaskForm.get('status')?.touched) {
+                                            <span class="pull-right help-block">Status is required</span>
                                         }
-                                    </select>
-                                    @if (!editTaskForm.get('type')?.valid && editTaskForm.get('type')?.touched) {
-                                        <span class="pull-right help-block">Type is required</span>
-                                    }
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label" for="status">Task status</label>
-                                <div class="col-sm-10">
-                                    <select class="form-control form-select" name="status" id="status" formControlName="status">
-                                        @for (taskStatus of taskStatuses; track taskStatus) {
-                                            <option
-                                            [value]="taskStatus.value">{{taskStatus.displayName}}</option>
-                                        }
-                                    </select>
-                                    @if (!editTaskForm.get('status')?.valid && editTaskForm.get('status')?.touched) {
-                                        <span class="pull-right help-block">Status is required</span>
-                                    }
+                            }
+                            @if (userRole === "Manager") {
+                                <div class="form-group row">
+                                    <label class="col-sm-2 col-form-label" for="assignedUser">Assigned user</label>
+                                    <div class="col-sm-10">
+                                        <select class="form-control form-select" name="assignedUser" id="assignedUser" formControlName="assignedUser">
+                                            <option [value]="null">None</option>
+                                            @for (assignableUser of assignableUsers; track assignableUser) {
+                                                <option
+                                                [value]="assignableUser.id">{{assignableUser.firstName + ' ' + assignableUser.lastName}}</option>
+                                            }
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label" for="assignedUser">Assigned user</label>
-                                <div class="col-sm-10">
-                                    <select class="form-control form-select" name="assignedUser" id="assignedUser" formControlName="assignedUser">
-                                        <option [value]="null">None</option>
-                                        @for (assignableUser of assignableUsers; track assignableUser) {
-                                            <option
-                                            [value]="assignableUser.id">{{assignableUser.firstName + ' ' + assignableUser.lastName}}</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>
+                            }
                         </div>
                     </div>
                 }

@@ -5,8 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TaskService } from '../task.service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DatePipe, KeyValuePipe } from '@angular/common';
-import { first, map, Subscription, switchMap, take, tap } from 'rxjs';
-import { User, UserData } from '../../users/user.model';
+import { map, Subscription, switchMap, take } from 'rxjs';
+import { UserData } from '../../users/user.model';
 import { AuthService } from '../../auth/auth.service';
 
 @Component({
@@ -25,6 +25,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   task: Task | null = null;
   editable: boolean = false;
   editMode: boolean = false;
+  userRole: string = "";
   taskTypes : Option[] = this.taskService.getTaskTypes();
   taskStatuses : Option[] = this.taskService.getTaskStatuses();
   assignableUsers: UserData[] = [];
@@ -102,7 +103,18 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     // Set task to be editable if logged in user has the admin role
     let loggedInUser : any = this.authService.currentUserSubject.getValue();
     if(loggedInUser) {
-      this.editable = loggedInUser.roles.map((role: Option) => {return role.value;}).includes("ADMIN");
+      let userRoles = loggedInUser.roles.map((role: Option) => {return role.value;});
+      if(userRoles.includes("ADMIN")) {
+        this.editable = true;
+        this.userRole = "Admin"
+      }
+      else if(userRoles.includes("MANAGER")) {
+        this.editable = true;
+        this.userRole = "Manager";
+      }
+      else {
+        this.router.navigate(['/']);
+      }
     }
 
     this.getCurrentTask();
