@@ -23,7 +23,7 @@
                     <div class="col-11">
                         <p class="list-group-item-text"><span class="badge bg-primary">{{task.status.displayName}}</span> {{ task.description }}</p>
                     </div>
-                    @if (this.editable) {
+                    @if (userRole === "Admin") {
                         <div class="col-1">
                             <button class="btn btn-danger" 
                             (click)="this.task !== null && this.task.id !== null ? onDeleted(this.task.id) : true">

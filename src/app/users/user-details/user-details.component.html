@@ -10,7 +10,7 @@
                         <span>Last name: {{user.lastName}} </span>
                     </div>
                     <div class="row">
-                        <span>Roles: {{getRoleNames(user.roles).join(", ")}} </span>
+                        <span>Roles: {{getUserRoleNames().join(", ")}} </span>
                     </div>
                     @if (!this.editMode && this.roleEditable) {
                         <div class="row d-flex flex-row-reverse">

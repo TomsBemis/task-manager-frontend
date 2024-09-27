@@ -112,7 +112,12 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     this.rolesCheckboxAttributes[role].checked = event.target.checked;
   }
 
-  getRoleNames(roles: any){
-    return roles.map((role: any) => role.displayName);
+  getUserRoleNames(): string[]{
+    if(!this.user) return [];
+    return this.user.roles.map((userRole: string) => {
+      let foundRole = this.allRoles.find(role => role.value == userRole);
+      if(!foundRole) return "";
+      return foundRole.displayName;
+    })
   }
 }

@@ -13,7 +13,7 @@ export interface UserData {
     id: string,
     firstName: string,
     lastName: string,
-    roles: Option[]
+    roles: string[]
 }
 
 export interface LoginCredentials { 

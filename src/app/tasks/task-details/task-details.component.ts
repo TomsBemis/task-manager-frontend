@@ -101,19 +101,15 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     // Set task to be editable if logged in user has the admin role
-    let loggedInUser : any = this.authService.currentUserSubject.getValue();
+    let loggedInUser : UserData | null = this.authService.currentUserSubject.getValue();
     if(loggedInUser) {
-      let userRoles = loggedInUser.roles.map((role: Option) => {return role.value;});
-      if(userRoles.includes("ADMIN")) {
+      if(loggedInUser.roles.includes("ADMIN")) {
         this.editable = true;
         this.userRole = "Admin"
       }
-      else if(userRoles.includes("MANAGER")) {
+      else if(loggedInUser.roles.includes("MANAGER")) {
         this.editable = true;
         this.userRole = "Manager";
-      }
-      else {
-        this.router.navigate(['/']);
       }
     }
 
