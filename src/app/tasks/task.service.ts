@@ -4,6 +4,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { beApiRoutes } from "../routes/be-api.routes";
 import { BehaviorSubject, first, Observable, tap } from 'rxjs';
+import { UserData } from "../users/user.model";
 
 @Injectable({ providedIn: "root" })
 export class TaskService{
@@ -38,8 +39,8 @@ export class TaskService{
         );
     }
 
-    public getTask(taskId: number): Observable<Task | null> {
-        return this.httpClient.get<Task | null>(beApiRoutes.tasks + "/" + taskId);
+    public getTask(taskId: number): Observable<{task: Task | null, assignableUsers: UserData[]}> {
+        return this.httpClient.get<{task: Task | null, assignableUsers: UserData[]}>(beApiRoutes.tasks + "/" + taskId);
     }
 
     public addTask(task: Task): Observable<Task | null>{

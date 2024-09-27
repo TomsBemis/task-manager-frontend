@@ -2,15 +2,15 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { beApiRoutes } from "../routes/be-api.routes";
 import { first, tap } from "rxjs/operators";
-import { LoginCredentials, AuthCredentials, User, LoginResponse } from "../users/user.model";
+import { LoginCredentials, AuthCredentials, User, LoginResponse, UserData } from "../users/user.model";
 import { BehaviorSubject, Observable } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-    public currentUserSubject: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
-    public currentUser$: Observable<User | null> = this.currentUserSubject.asObservable();
+    public currentUserSubject: BehaviorSubject<UserData | null> = new BehaviorSubject<UserData | null>(null);
+    public currentUser$: Observable<UserData | null> = this.currentUserSubject.asObservable();
 
     constructor (private cookieService: CookieService, private httpClient: HttpClient) {}
 

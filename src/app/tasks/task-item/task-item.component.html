@@ -5,10 +5,14 @@
                 <h5 class="list-group-item-heading">{{ taskItem.title }} ({{taskItem.type.displayName}}) </h5>
             </a>
         </div>
-        <div class="col-1">
-            <div class="col-1">
-                <button class="btn btn-danger" (click)="onDeleted()">Delete</button>
-            </div>
-        </div>
+        @if(currentUser$ | async; as currentUser) {
+            @if(currentUser.roles.includes("ADMIN")){
+                <div class="col-1">
+                    <div class="col-1">
+                        <button class="btn btn-danger" (click)="onDeleted()">Delete</button>
+                    </div>
+                </div>
+            }
+        }
     </div>
 </div>

@@ -6,6 +6,8 @@ import { TaskService } from '../task.service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DatePipe, KeyValuePipe } from '@angular/common';
 import { map, Subscription, switchMap, take } from 'rxjs';
+import { UserData } from '../../users/user.model';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-task-details',
@@ -21,9 +23,12 @@ import { map, Subscription, switchMap, take } from 'rxjs';
 export class TaskDetailsComponent implements OnInit, OnDestroy {
 
   task: Task | null = null;
+  editable: boolean = false;
   editMode: boolean = false;
+  userRole: string = "";
   taskTypes : Option[] = this.taskService.getTaskTypes();
   taskStatuses : Option[] = this.taskService.getTaskStatuses();
+  assignableUsers: UserData[] = [];
   deleteTaskSubscription = new Subscription();
   updateTaskSubscription = new Subscription();
 
@@ -34,7 +39,8 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     ]),
     description: new FormControl(),
     type: new FormControl(),
-    status: new FormControl()
+    status: new FormControl(),
+    assignedUser: new FormControl()
   });
 
   onDeleted(taskId: number) {
@@ -48,7 +54,8 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     this.editMode = !this.editMode;
   }
   
-  onSubmit (task : Task) {
+  onSubmit () {
+
     // Get filled out form data using form group
 
     if(this.task) {
@@ -66,6 +73,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
           ) as Option,
           updatedAt: new Date(),
           createdAt: this.task.createdAt,
+          assignedUser: this.editTaskForm.get('assignedUser')?.value
         }
       ).subscribe( updatedTask => {
         if(updatedTask) {
@@ -78,13 +86,33 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     }    
   }
 
-  constructor(private router: Router, private route: ActivatedRoute, private taskService: TaskService) {}
+  constructor(
+    private router: Router, 
+    private route: ActivatedRoute, 
+    private taskService: TaskService,
+    private authService: AuthService
+  ) {}
+  
   ngOnDestroy(): void {
     this.deleteTaskSubscription.unsubscribe();
     this.updateTaskSubscription.unsubscribe();
   }
   
   ngOnInit(): void {
+
+    // Set task to be editable if logged in user has the admin role
+    let loggedInUser : UserData | null = this.authService.currentUserSubject.getValue();
+    if(loggedInUser) {
+      if(loggedInUser.roles.includes("ADMIN")) {
+        this.editable = true;
+        this.userRole = "Admin"
+      }
+      else if(loggedInUser.roles.includes("MANAGER")) {
+        this.editable = true;
+        this.userRole = "Manager";
+      }
+    }
+
     this.getCurrentTask();
   }
 
@@ -97,19 +125,22 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
         return this.taskService.getTask(taskId)
       }),
       take(1)
-    ).subscribe(responseTask => {
-        this.task = responseTask;
+    ).subscribe(response => {
+      
+      this.task = response.task;
+      this.assignableUsers = response.assignableUsers;
 
-        this.editTaskForm = new FormGroup({
-          title: new FormControl(this.task?.title, [
-            Validators.required,
-            this.validateTitleUnique.bind(this)
-          ]), //Custom validator for unique title
-          description: new FormControl(this.task?.description),
-          type: new FormControl(this.task?.type?.value, Validators.required),
-          status: new FormControl(this.task?.status?.value, Validators.required)
-        });
+      this.editTaskForm = new FormGroup({
+        title: new FormControl(this.task?.title, [
+          Validators.required,
+          this.validateTitleUnique.bind(this)
+        ]), //Custom validator for unique title
+        description: new FormControl(this.task?.description),
+        type: new FormControl(this.task?.type?.value, Validators.required),
+        status: new FormControl(this.task?.status?.value, Validators.required),
+        assignedUser: new FormControl(this.task?.assignedUser?.id)
       });
+    });
 
   }
 

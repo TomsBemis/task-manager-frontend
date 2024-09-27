@@ -6,7 +6,14 @@ export interface User {
     password: string,
     firstName: string,
     lastName: string,
-    role: Option
+    roles: string[]
+}
+
+export interface UserData {
+    id: string,
+    firstName: string,
+    lastName: string,
+    roles: string[]
 }
 
 export interface LoginCredentials { 
