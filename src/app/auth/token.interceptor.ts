@@ -7,6 +7,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 import { Provider } from '@angular/core';
+import { guestBeApiRouteWhitelist } from '../routes/be-api.routes';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
@@ -18,6 +19,9 @@ export class TokenInterceptor implements HttpInterceptor {
   ) {}
   
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+
+    // Skip appending token if guests can have access to route
+    if(guestBeApiRouteWhitelist.includes(request.url)) return next.handle(request);
     
     // Get session token and append it to the header
     let newRequest;

@@ -1,10 +1,13 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { beApiRoutes } from "../routes/be-api.routes";
-import { first, tap } from "rxjs/operators";
-import { LoginCredentials, AuthCredentials, User, LoginResponse, UserData } from "../users/user.model";
-import { BehaviorSubject, Observable } from "rxjs";
+import { catchError, first, tap } from "rxjs/operators";
+import { UserData } from "../users/user.model";
+import { LoginCredentials, AuthCredentials, LoginResponse } from "../routes/app.routes";
+import { BehaviorSubject, Observable, throwError } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
+import { ErrorResponse } from "../routes/app.routes";
+import { error } from "console";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -27,6 +30,29 @@ export class AuthService {
                 this.cookieService.set('refreshToken', response.authentication.refreshToken);
                 this.cookieService.set('accessToken', response.authentication.accessToken);
             })
+        );
+    }
+
+    public register(registerCredentials : any): Observable<any> {
+        return this.httpClient.post<any>(
+            beApiRoutes.register, 
+            registerCredentials
+        ).pipe(
+            first(),
+            tap((response) => {
+
+                this.currentUserSubject.next(response.user);
+                this.cookieService.set('loggedIn',"true");
+                this.cookieService.set('userId',response.authentication.userId);
+                this.cookieService.set('refreshToken', response.authentication.refreshToken);
+                this.cookieService.set('accessToken', response.authentication.accessToken);       
+
+                return response;
+                
+            }),
+            catchError((errorResponse: HttpErrorResponse) => {
+                return throwError(() => new Error(errorResponse.error));
+            }),
         );
     }
 

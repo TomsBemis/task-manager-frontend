@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { LoginCredentials } from '../../users/user.model';
+import { LoginCredentials } from '../../routes/app.routes';
 
 @Component({
   selector: 'app-login',
