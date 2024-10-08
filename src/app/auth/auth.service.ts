@@ -6,8 +6,6 @@ import { UserData } from "../users/user.model";
 import { LoginCredentials, AuthCredentials, LoginResponse } from "../routes/app.routes";
 import { BehaviorSubject, Observable, throwError } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
-import { ErrorResponse } from "../routes/app.routes";
-import { error } from "console";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -25,10 +23,7 @@ export class AuthService {
             first(),
             tap((response) => {
                 this.currentUserSubject.next(response.user);
-                this.cookieService.set('loggedIn',"true");
-                this.cookieService.set('userId',response.authentication.userId);
-                this.cookieService.set('refreshToken', response.authentication.refreshToken);
-                this.cookieService.set('accessToken', response.authentication.accessToken);
+                this.setAuthCookies(response.authentication);
             })
         );
     }
@@ -40,15 +35,10 @@ export class AuthService {
         ).pipe(
             first(),
             tap((response) => {
-
                 this.currentUserSubject.next(response.user);
-                this.cookieService.set('loggedIn',"true");
-                this.cookieService.set('userId',response.authentication.userId);
-                this.cookieService.set('refreshToken', response.authentication.refreshToken);
-                this.cookieService.set('accessToken', response.authentication.accessToken);       
+                this.setAuthCookies(response.authentication);
 
                 return response;
-                
             }),
             catchError((errorResponse: HttpErrorResponse) => {
                 return throwError(() => new Error(errorResponse.error));
@@ -83,5 +73,12 @@ export class AuthService {
             this.cookieService.set('accessToken', response.accessToken);
             return response;
         }));
+    }
+
+    private setAuthCookies(authenticationData: any) {
+        this.cookieService.set('loggedIn',"true");
+        this.cookieService.set('userId',authenticationData.userId);
+        this.cookieService.set('refreshToken', authenticationData.refreshToken);
+        this.cookieService.set('accessToken', authenticationData.accessToken);    
     }
 }

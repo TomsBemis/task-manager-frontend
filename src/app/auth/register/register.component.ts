@@ -42,6 +42,7 @@ export class RegisterComponent {
 
     this.registerSubscription = this.authService.register(this.registerTaskForm.value).subscribe({
       next : (response) => {
+        this.router.navigate(['/tasks']);
       },
       error : responseError => {
         this.registerErrorMessage = responseError.message;
