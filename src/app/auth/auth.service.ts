@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { beApiRoutes } from "../routes/be-api.routes";
 import { catchError, first, tap } from "rxjs/operators";
 import { UserData } from "../users/user.model";
-import { LoginCredentials, AuthCredentials, LoginResponse } from "../routes/app.routes";
+import { LoginCredentials, AuthCredentials, LoginResponse, RegisterCredentials } from "../routes/app.routes";
 import { BehaviorSubject, Observable, throwError } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
 
@@ -28,8 +28,8 @@ export class AuthService {
         );
     }
 
-    public register(registerCredentials : any): Observable<any> {
-        return this.httpClient.post<any>(
+    public register(registerCredentials : RegisterCredentials): Observable<LoginResponse> {
+        return this.httpClient.post<LoginResponse>(
             beApiRoutes.register, 
             registerCredentials
         ).pipe(

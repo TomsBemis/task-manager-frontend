@@ -40,6 +40,14 @@ export interface AuthCredentials {
     userId: string,
 }
 
+export interface RegisterCredentials { 
+    username: string,
+    firstName: string,
+    lastName: string,
+    password: string,
+    repeatPassword: string,
+}
+
 export interface LoginResponse {
     user: User,
     authentication: AuthCredentials,
