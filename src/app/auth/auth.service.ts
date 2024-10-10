@@ -1,9 +1,10 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { beApiRoutes } from "../routes/be-api.routes";
-import { first, tap } from "rxjs/operators";
-import { LoginCredentials, AuthCredentials, User, LoginResponse, UserData } from "../users/user.model";
-import { BehaviorSubject, Observable } from "rxjs";
+import { catchError, first, tap } from "rxjs/operators";
+import { UserData } from "../users/user.model";
+import { LoginCredentials, AuthCredentials, LoginResponse, RegisterCredentials } from "../routes/app.routes";
+import { BehaviorSubject, Observable, throwError } from "rxjs";
 import { CookieService } from "ngx-cookie-service";
 
 @Injectable({ providedIn: 'root' })
@@ -22,11 +23,26 @@ export class AuthService {
             first(),
             tap((response) => {
                 this.currentUserSubject.next(response.user);
-                this.cookieService.set('loggedIn',"true");
-                this.cookieService.set('userId',response.authentication.userId);
-                this.cookieService.set('refreshToken', response.authentication.refreshToken);
-                this.cookieService.set('accessToken', response.authentication.accessToken);
+                this.setAuthCookies(response.authentication);
             })
+        );
+    }
+
+    public register(registerCredentials : RegisterCredentials): Observable<LoginResponse> {
+        return this.httpClient.post<LoginResponse>(
+            beApiRoutes.register, 
+            registerCredentials
+        ).pipe(
+            first(),
+            tap((response) => {
+                this.currentUserSubject.next(response.user);
+                this.setAuthCookies(response.authentication);
+
+                return response;
+            }),
+            catchError((errorResponse: HttpErrorResponse) => {
+                return throwError(() => new Error(errorResponse.error));
+            }),
         );
     }
 
@@ -57,5 +73,12 @@ export class AuthService {
             this.cookieService.set('accessToken', response.accessToken);
             return response;
         }));
+    }
+
+    private setAuthCookies(authenticationData: any) {
+        this.cookieService.set('loggedIn',"true");
+        this.cookieService.set('userId',authenticationData.userId);
+        this.cookieService.set('refreshToken', authenticationData.refreshToken);
+        this.cookieService.set('accessToken', authenticationData.accessToken);    
     }
 }

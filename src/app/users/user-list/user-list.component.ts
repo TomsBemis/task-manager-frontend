@@ -26,7 +26,7 @@ export class UserListComponent implements OnInit {
 
     // Check if logged in user is admin, or if not then compare ids
     let loggedInUser = this.authService.currentUserSubject.getValue();
-    if(!loggedInUser || loggedInUser.roles.includes("ADMIN")) throw Error("Only users with administrator priviledges have access.");
+    if(!loggedInUser || !loggedInUser.roles.includes("ADMIN")) throw Error("Only users with administrator priviledges have access.");
 
     // If user list is empty then try to initialize
     if(this.userList.getValue().length === 0) {

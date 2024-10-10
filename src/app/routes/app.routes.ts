@@ -7,6 +7,8 @@ import { authGuard } from '../guards/auth.guard';
 import { UserDetailsComponent } from '../users/user-details/user-details.component';
 import { UserListComponent } from '../users/user-list/user-list.component';
 import { userRoleGuard } from '../guards/userRole.guard';
+import { RegisterComponent } from '../auth/register/register.component';
+import { User } from '../users/user.model';
 
 export const appRoutes: Routes = [
     { path: '', pathMatch: 'full', redirectTo: 'tasks'},
@@ -15,7 +17,42 @@ export const appRoutes: Routes = [
     { path: 'tasks/:id', component: TaskDetailsComponent , canActivate: [authGuard]},
 
     { path: 'login', component: LoginComponent },
+    { path: 'register', component: RegisterComponent },
     
     { path: 'users/:userId', component: UserDetailsComponent, canActivate: [authGuard]},
     { path: 'users', component: UserListComponent, canActivate: [authGuard]},
 ];
+
+export interface LoginCredentials { 
+    username : string, 
+    password : string
+}
+
+export interface LogoutCredentials { 
+    username : string, 
+    password : string,
+    refreshToken: string
+}
+
+export interface AuthCredentials {
+    accessToken: string,
+    refreshToken: string,
+    userId: string,
+}
+
+export interface RegisterCredentials { 
+    username: string,
+    firstName: string,
+    lastName: string,
+    password: string,
+    repeatPassword: string,
+}
+
+export interface LoginResponse {
+    user: User,
+    authentication: AuthCredentials,
+}
+
+export interface ErrorResponse {
+    error: string,
+}
