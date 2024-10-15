@@ -9,7 +9,7 @@
             @if(currentUser.roles.includes("ADMIN")){
                 <div class="col-1">
                     <div class="col-1">
-                        <button class="btn btn-danger" (click)="onDeleted()">Delete</button>
+                        <button class="btn btn-danger" (click)="onDeleted()">{{ ('task.deleteTask' | translate) }}</button>
                     </div>
                 </div>
             }

@@ -4,13 +4,15 @@ import { Subscription } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
 import { ErrorMessageComponent } from "../../shared/error-message/error-message.component";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    ErrorMessageComponent
+    ErrorMessageComponent,
+    TranslateModule
 ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'

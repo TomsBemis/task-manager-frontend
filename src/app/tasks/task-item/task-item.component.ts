@@ -3,13 +3,15 @@ import { BasicTask } from '../task.model';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { AsyncPipe } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-task-item',
   standalone: true,
   imports: [
     RouterLink,
-    AsyncPipe
+    AsyncPipe,
+    TranslateModule
   ],
   templateUrl: './task-item.component.html',
   styleUrl: './task-item.component.scss'
