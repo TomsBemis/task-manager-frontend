@@ -5,13 +5,15 @@ import { TaskService } from '../task.service';
 import { KeyValuePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-create-task',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    KeyValuePipe
+    KeyValuePipe,
+    TranslateModule
   ],
   templateUrl: './create-task.component.html',
   styleUrl: './create-task.component.scss'

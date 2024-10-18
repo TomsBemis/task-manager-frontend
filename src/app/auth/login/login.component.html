@@ -9,21 +9,19 @@
             }
             <form [formGroup]="loginTaskForm" (ngSubmit)="onLogin(loginTaskForm.getRawValue())">
                 <div class="form-group row mb-3">
-                    <label class="col-4 col-form-label" for="username">Username</label>
+                    <label class="col-4 col-form-label" for="username">{{ "user.username" | translate }}</label>
                     <div class="col-8">
                         <input class="form-control" type="text" id="username" name="username" formControlName="username">
                     </div>
                 </div>
                 <div class="form-group row mb-3">
-                    <label class="col-4 col-form-label" for="password">Password</label>
+                    <label class="col-4 col-form-label" for="password">{{ "user.password" | translate }}</label>
                     <div class="col-8">
                         <input class="form-control" type="password" id="password" name="password" formControlName="password">
                     </div>
                 </div>
-                <div class="form-group row justify-content-end">
-                    <div class="col-sm-2">
-                        <input class="form-control" class="btn btn-primary" type="submit" value="Login">
-                    </div>
+                <div class="form-group row float-end">
+                    <input class="form-control" class="btn btn-primary" type="submit" [value]="'user.login' | translate">
                 </div>
             </form>
         </div>

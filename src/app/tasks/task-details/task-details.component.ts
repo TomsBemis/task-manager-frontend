@@ -8,6 +8,7 @@ import { DatePipe, KeyValuePipe } from '@angular/common';
 import { map, Subscription, switchMap, take } from 'rxjs';
 import { UserData } from '../../users/user.model';
 import { AuthService } from '../../auth/auth.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-task-details',
@@ -15,7 +16,8 @@ import { AuthService } from '../../auth/auth.service';
   imports: [
     ReactiveFormsModule,
     KeyValuePipe,
-    DatePipe
+    DatePipe,
+    TranslateModule
   ],
   templateUrl: './task-details.component.html',
   styleUrl: './task-details.component.scss'

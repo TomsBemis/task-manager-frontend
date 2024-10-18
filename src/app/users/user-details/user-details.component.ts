@@ -7,13 +7,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { map, Subscription, switchMap, take } from 'rxjs';
 import { Option } from '../../shared/option.model';
 import { AuthService } from '../../auth/auth.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-user-details',
   standalone: true,
   imports: [
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TranslateModule
   ],
   templateUrl: './user-details.component.html',
   styleUrl: './user-details.component.scss'

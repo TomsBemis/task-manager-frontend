@@ -15,4 +15,5 @@ import { NavComponent } from './shared/nav/nav.component';
 export class AppComponent {
   title = 'task-manager';
 
+  constructor() {}
 }

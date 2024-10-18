@@ -4,19 +4,17 @@
             <div class="row d-flex flex-row-reverse">
                 <div class="col">
                     <div class="row">
-                        <span>First name: {{user.firstName}} </span>
+                        <span>{{ "user.firstName" | translate}}: {{user.firstName}} </span>
                     </div>
                     <div class="row">
-                        <span>Last name: {{user.lastName}} </span>
+                        <span>{{ "user.lastName" | translate }}: {{user.lastName}} </span>
                     </div>
                     <div class="row">
-                        <span>Roles: {{getUserRoleNames().join(", ")}} </span>
+                        <span>{{ "user.roles" | translate }}: {{getUserRoleNames().join(", ")}} </span>
                     </div>
                     @if (!this.editMode && this.roleEditable) {
-                        <div class="row d-flex flex-row-reverse">
-                            <div class="col-1">
-                                <button class="btn btn-secondary" (click)="toggleEditMode()">Edit</button>
-                            </div>
+                        <div class="row float-end">
+                            <button class="btn btn-secondary" (click)="toggleEditMode()">{{ "user.editUser" | translate }}</button>
                         </div>
                     }
                 </div>
@@ -26,7 +24,7 @@
                     <div class="row">
                         <div class="col-xs-6">
                             <div class="form-group row">
-                                <label class="col-sm-1 col-form-label" for="roles">Roles:</label>
+                                <label class="col-sm-1 col-form-label" for="roles">{{ "user.roles" | translate }}</label>
                                 <div class="col-sm-11">
                                     @for (role of allRoles; track role; let i = $index;) {
                                         <div class="form-check form-switch">
@@ -45,10 +43,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row d-flex flex-row-reverse">
-                        <div class="col-1">
-                            <input class="form-control" class="btn btn-primary" type="submit" value="Save">
-                        </div>
+                    <div class="row float-end">
+                        <input class="form-control" class="btn btn-primary" type="submit" [value]="'user.saveUser' | translate">
                     </div>
                 </form>
             }
