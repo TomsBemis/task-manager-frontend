@@ -6,7 +6,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { tokenInterceptorProvider } from './auth/token.interceptor';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { HttpLoaderFactory } from './shared/translate/translate.module';
+import { HttpLoaderFactory } from './shared/translate/localization.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [

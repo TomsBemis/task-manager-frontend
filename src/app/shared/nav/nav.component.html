@@ -32,8 +32,8 @@
           <ul class="navbar-nav">
             <li class="nav-item me-1">
               <select class="form-control form-select" (change)="onChangeLanguage($event)">
-                @for (language of languages; track $index) {
-                    <option [value]="language" [selected]="language == currentLanguage">{{languageNames.get(language)}}</option>
+                @for (languageNameKey of languageNames.keys(); track $index) {
+                    <option [value]="languageNameKey" [selected]="languageNameKey == currentLanguage">{{languageNames.get(languageNameKey)}}</option>
                 }
               </select>
             </li>

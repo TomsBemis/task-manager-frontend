@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Option } from '../../shared/option.model';
+import { TranslateModule } from '@ngx-translate/core';
+import { LocalizationService } from '../translate/localization.service';
 
 @Component({
   selector: 'app-nav',
@@ -23,8 +23,7 @@ export class NavComponent {
   currentUser = this.authService.currentUserSubject;
   currentUser$ = this.authService.currentUserSubject.asObservable();
 
-  currentLanguage: string = this.translateService.currentLang;
-  languages: string[] = this.translateService.getLangs();
+  currentLanguage: string = this.localizationService.currentLanguage;
   languageNames = new Map<string, string>([
     ["lv", "LAT"],
     ["en", "ENG"]
@@ -33,7 +32,7 @@ export class NavComponent {
   constructor(
     private authService : AuthService, 
     private router: Router,
-    private translateService: TranslateService
+    private localizationService: LocalizationService
   ) {}
 
   onLogout(){
@@ -45,6 +44,6 @@ export class NavComponent {
   }
 
   onChangeLanguage(language: any) {
-    this.translateService.use(language.target.value);
+    this.localizationService.changeLanguage(language.target.value);
   }
 }
