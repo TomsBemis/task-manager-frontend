@@ -3,6 +3,7 @@ import { beApiUrl } from "../../environment";
 const taskRouteGroup : string = '/api/tasks';
 const authRouteGroup : string = '/api/auth';
 const userRouteGroup : string = '/api/users';
+const localizationGroup : string = '/api/localization';
 
 export const beApiRoutes = {
     essentialTaskData : beApiUrl + taskRouteGroup + '/essential-task-data',
@@ -12,6 +13,7 @@ export const beApiRoutes = {
     logout : beApiUrl + authRouteGroup + '/logout',
     refreshToken : beApiUrl + authRouteGroup + '/refresh',
     users : beApiUrl + userRouteGroup,
+    localization : beApiUrl + localizationGroup,
 }
 
 export const guestBeApiRouteWhitelist = [
