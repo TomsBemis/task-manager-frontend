@@ -6,7 +6,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { tokenInterceptorProvider } from './auth/token.interceptor';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { HttpLoaderFactory } from './shared/translate/localization.service';
+import { BackendLoader } from './shared/translate/backend-loader';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,7 +16,7 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(TranslateModule.forRoot({
       loader: {
           provide: TranslateLoader,
-          useFactory: HttpLoaderFactory,
+          useClass: BackendLoader,
           deps: [HttpClient]
      }
     })),
