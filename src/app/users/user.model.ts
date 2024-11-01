@@ -1,4 +1,8 @@
-import { Option } from "../shared/option.model"
+export enum Role {
+    user = "user",
+    manager = "manager",
+    admin = "admin"
+}
 
 export interface User {
     id: string,
@@ -6,32 +10,17 @@ export interface User {
     password: string,
     firstName: string,
     lastName: string,
-    roles: string[]
+    roles: Role[]
 }
 
 export interface UserData {
     id: string,
     firstName: string,
     lastName: string,
-    roles: string[]
+    roles: Role[]
 }
 
 export interface UserRole {
-    role: Option, 
+    role: string, 
     enabled: boolean
 }
-
-export const initialRoles: {[key: string]: Option} = {
-    USER: {
-        value: "USER",
-        displayName: "Regular user"
-    },
-    MANAGER: {
-        value: "MANAGER",
-        displayName: "Manager"
-    },
-    ADMIN: {
-        value: "ADMIN",
-        displayName: "Administrator"
-    }
-};

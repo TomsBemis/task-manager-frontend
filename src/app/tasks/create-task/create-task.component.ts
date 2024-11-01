@@ -1,11 +1,11 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Option } from '../../shared/option.model';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TaskService } from '../task.service';
 import { KeyValuePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
+import { TaskStatus, TaskType } from '../task.model';
 
 @Component({
   selector: 'app-create-task',
@@ -19,9 +19,9 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './create-task.component.scss'
 })
 export class CreateTaskComponent implements OnDestroy {
-
-  taskTypes : Option[] = this.taskService.getTaskTypes();
-  taskStatuses : Option[] = this.taskService.getTaskStatuses();
+  
+  taskTypes: string[] = Object.keys(TaskType);
+  taskStatuses: string[] = Object.keys(TaskStatus);
 
   addTaskSubscription : Subscription = new Subscription();
 
@@ -48,12 +48,8 @@ export class CreateTaskComponent implements OnDestroy {
       id: 0,
       title: this.createTaskForm.get('title')?.value,
       description: this.createTaskForm.get('description')?.value,
-      type: this.taskTypes.find( taskType => 
-        taskType.value == this.createTaskForm.get('type')?.value
-      ) as Option,
-      status: this.taskStatuses.find(taskStatus => 
-        taskStatus.value == this.createTaskForm.get('status')?.value
-      ) as Option,
+      type: this.createTaskForm.get('type')?.value,
+      status: this.createTaskForm.get('status')?.value,
       updatedAt: new Date(),
       createdAt: new Date(),
       assignedUser: null

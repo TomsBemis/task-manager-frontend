@@ -21,19 +21,19 @@ export class TaskListComponent implements OnInit, OnDestroy {
   taskList = this.taskService.basicTasksSubject;
   taskList$ = this.taskService.basicTasksSubject.asObservable();
   deleteTaskSubscription = new Subscription();
-  getEssentialDataSubscription = new Subscription();
+  getTaskDataSubscription = new Subscription();
 
   constructor(private taskService: TaskService) {}
 
   ngOnDestroy(): void {
     this.deleteTaskSubscription.unsubscribe();
-    this.getEssentialDataSubscription.unsubscribe();
+    this.getTaskDataSubscription.unsubscribe();
   }
 
   ngOnInit(): void {
-    this.getEssentialDataSubscription = this.taskService.getEssentialData().subscribe(
-      essentialData => {
-      this.taskList.next(essentialData.tasks);
+    this.getTaskDataSubscription = this.taskService.getTasks().subscribe(
+      taskData => {
+      this.taskList.next(taskData);
     });
   }
 

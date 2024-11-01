@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { AsyncPipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { Role } from '../../users/user.model';
 
 @Component({
   selector: 'app-task-item',
@@ -18,6 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class TaskItemComponent {
 
+  userRoles = Role;
   currentUser = this.authService.currentUserSubject;
   currentUser$ = this.authService.currentUserSubject.asObservable();
   @Output() taskDeletedEvent = new EventEmitter<void>();

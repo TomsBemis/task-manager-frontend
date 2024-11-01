@@ -10,7 +10,7 @@
                         <span>{{ "user.lastName" | translate }}: {{user.lastName}} </span>
                     </div>
                     <div class="row">
-                        <span>{{ "user.roles" | translate }}: {{getUserRoleNames().join(", ")}} </span>
+                        <span>{{ "user.roles" | translate }}: {{getUserRoleNames()}} </span>
                     </div>
                     @if (!this.editMode && this.roleEditable) {
                         <div class="row float-end">
@@ -26,17 +26,17 @@
                             <div class="form-group row">
                                 <label class="col-sm-1 col-form-label" for="roles">{{ "user.roles" | translate }}</label>
                                 <div class="col-sm-11">
-                                    @for (role of allRoles; track role; let i = $index;) {
+                                    @for (role of this.roles; track role; let i = $index;) {
                                         <div class="form-check form-switch">
                                             <input 
                                                 class="form-check-input" 
                                                 type="checkbox"
-                                                [id]="role.value"
-                                                [name]="role.value"
-                                                [disabled]="rolesCheckboxAttributes[role.value].disabled"
-                                                [checked]="rolesCheckboxAttributes[role.value].checked"
-                                                (change)="onRoleChange($event, role.value)">
-                                            <label class="form-check-label" for="flexSwitchCheckDefault">{{role.displayName}}</label>
+                                                [id]="role"
+                                                [name]="role"
+                                                [disabled]="rolesCheckboxAttributes.get(role)?.disabled"
+                                                [checked]="rolesCheckboxAttributes.get(role)?.checked"
+                                                (change)="onRoleChange($event, role)">
+                                            <label class="form-check-label" for="flexSwitchCheckDefault">{{ "user.role."+role | translate }}</label>
                                         </div>
                                     }
                                 </div>

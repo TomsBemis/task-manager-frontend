@@ -8,11 +8,11 @@ import { UserDetailsComponent } from '../users/user-details/user-details.compone
 import { UserListComponent } from '../users/user-list/user-list.component';
 import { userRoleGuard } from '../guards/userRole.guard';
 import { RegisterComponent } from '../auth/register/register.component';
-import { User } from '../users/user.model';
+import { Role, User } from '../users/user.model';
 
 export const appRoutes: Routes = [
     { path: '', pathMatch: 'full', redirectTo: 'tasks'},
-    { path: 'tasks/create', component: CreateTaskComponent , canActivate: [authGuard, userRoleGuard(["ADMIN"],true)]},
+    { path: 'tasks/create', component: CreateTaskComponent , canActivate: [authGuard, userRoleGuard([Role.admin],true)]},
     { path: 'tasks', component: TaskListComponent , canActivate: [authGuard]},
     { path: 'tasks/:id', component: TaskDetailsComponent , canActivate: [authGuard]},
 

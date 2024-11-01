@@ -1,12 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Task, BasicTask } from '../task.model';
-import { Option } from '../../shared/option.model';
+import { Task, BasicTask, TaskStatus, TaskType } from '../task.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TaskService } from '../task.service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DatePipe, KeyValuePipe } from '@angular/common';
 import { map, Subscription, switchMap, take } from 'rxjs';
-import { UserData } from '../../users/user.model';
+import { Role, UserData } from '../../users/user.model';
 import { AuthService } from '../../auth/auth.service';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -24,12 +23,12 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class TaskDetailsComponent implements OnInit, OnDestroy {
 
+  taskTypes: string[] = Object.keys(TaskType);
+  taskStatuses: string[] = Object.keys(TaskStatus);
   task: Task | null = null;
   editable: boolean = false;
   editMode: boolean = false;
   userRole: string = "";
-  taskTypes : Option[] = this.taskService.getTaskTypes();
-  taskStatuses : Option[] = this.taskService.getTaskStatuses();
   assignableUsers: UserData[] = [];
   deleteTaskSubscription = new Subscription();
   updateTaskSubscription = new Subscription();
@@ -67,12 +66,8 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
           id: this.task.id,
           title: this.editTaskForm.get('title')?.value,
           description: this.editTaskForm.get('description')?.value,
-          type: this.taskTypes.find( taskType => 
-            taskType.value == this.editTaskForm.get('type')?.value
-          ) as Option,
-          status: this.taskStatuses.find(taskStatus => 
-            taskStatus.value == this.editTaskForm.get('status')?.value
-          ) as Option,
+          type: this.editTaskForm.get('type')?.value,
+          status: this.editTaskForm.get('status')?.value,
           updatedAt: new Date(),
           createdAt: this.task.createdAt,
           assignedUser: this.editTaskForm.get('assignedUser')?.value
@@ -105,13 +100,13 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     // Set task to be editable if logged in user has the admin role
     let loggedInUser : UserData | null = this.authService.currentUserSubject.getValue();
     if(loggedInUser) {
-      if(loggedInUser.roles.includes("ADMIN")) {
+      if(loggedInUser.roles.includes(Role.admin)) {
         this.editable = true;
-        this.userRole = "Admin"
+        this.userRole = Role.admin
       }
-      else if(loggedInUser.roles.includes("MANAGER")) {
+      else if(loggedInUser.roles.includes(Role.manager)) {
         this.editable = true;
-        this.userRole = "Manager";
+        this.userRole = Role.manager;
       }
     }
 
@@ -138,8 +133,8 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
           this.validateTitleUnique.bind(this)
         ]), //Custom validator for unique title
         description: new FormControl(this.task?.description),
-        type: new FormControl(this.task?.type?.value, Validators.required),
-        status: new FormControl(this.task?.status?.value, Validators.required),
+        type: new FormControl(this.task?.type, Validators.required),
+        status: new FormControl(this.task?.status, Validators.required),
         assignedUser: new FormControl(this.task?.assignedUser?.id)
       });
     });

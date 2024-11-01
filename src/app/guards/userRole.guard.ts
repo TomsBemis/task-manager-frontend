@@ -1,10 +1,9 @@
 import { CanActivateFn, Router } from "@angular/router";
-import { Option } from "../shared/option.model";
 import { AuthService } from "../auth/auth.service";
 import { inject } from "@angular/core";
-import { User, UserData } from "../users/user.model";
+import { Role, UserData } from "../users/user.model";
 
-export const userRoleGuard = (criteriaRoles: string[], whitelist: boolean): CanActivateFn => {
+export const userRoleGuard = (criteriaRoles: Role[], whitelist: boolean): CanActivateFn => {
   
   return async (route, state): Promise<boolean> => {
   

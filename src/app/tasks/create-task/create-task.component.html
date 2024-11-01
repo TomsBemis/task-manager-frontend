@@ -25,8 +25,10 @@
                 <label class="col-sm-2 col-form-label" for="type">{{"task.taskType" | translate}}</label>
                 <div class="col-sm-10">
                     <select class="form-control form-select" name="type" id="type" formControlName="type">
-                        @for (taskType of taskTypes; track taskType) {
-                            <option [value]="taskType.value">{{"task.type."+taskType.value | translate}}</option>
+                        @for (taskType of taskTypes; track $index) {
+                            <option [ngValue]="taskType">
+                                {{ ('task.type.'+taskType | translate) }}
+                            </option>
                         }
                     </select>
                     @if (!createTaskForm.get('type')?.valid && createTaskForm.get('type')?.touched) {
@@ -38,8 +40,10 @@
                 <label class="col-sm-2 col-form-label" for="status">{{"task.taskStatus" | translate}}</label>
                 <div class="col-sm-10">
                     <select class="form-control form-select" name="status" id="status" formControlName="status">
-                        @for (taskStatus of taskStatuses; track taskStatus) {
-                            <option [value]="taskStatus.value">{{"task.status."+taskStatus.value | translate}}</option>
+                        @for (taskStatus of taskStatuses; track $index) {
+                            <option [ngValue]="taskStatus">
+                                {{ ('task.status.'+taskStatus | translate) }}
+                            </option>
                         }
                     </select>
                     @if (!createTaskForm.get('status')?.valid && createTaskForm.get('status')?.touched) {

@@ -2,11 +2,11 @@
     <div class="row">
         <div class="col-11">
             <a [routerLink]="['/tasks', taskItem.id ]" class="clearfix text-decoration-none">
-                <h5 class="list-group-item-heading">{{ taskItem.title }} ({{taskItem.type.displayName}}) </h5>
+                <h5 class="list-group-item-heading">{{ taskItem.title }} ({{ ('task.type.'+taskItem.type| translate) }}) </h5>
             </a>
         </div>
         @if(currentUser$ | async; as currentUser) {
-            @if(currentUser.roles.includes("ADMIN")){
+            @if(currentUser.roles.includes(userRoles.admin)){
                 <div class="col-1">
                     <div class="col-1">
                         <button class="btn btn-danger" (click)="onDeleted()">{{ ('task.deleteTask' | translate) }}</button>

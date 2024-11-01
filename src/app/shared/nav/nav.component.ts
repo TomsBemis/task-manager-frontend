@@ -4,6 +4,7 @@ import { AuthService } from '../../auth/auth.service';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { LocalizationService } from '../translate/localization.service';
+import { Role } from '../../users/user.model';
 
 @Component({
   selector: 'app-nav',
@@ -20,6 +21,7 @@ import { LocalizationService } from '../translate/localization.service';
 })
 export class NavComponent {
 
+  userRoles = Role;
   currentUser = this.authService.currentUserSubject;
   currentUser$ = this.authService.currentUserSubject.asObservable();
 
