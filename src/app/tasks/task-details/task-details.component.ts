@@ -29,6 +29,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   editable: boolean = false;
   editMode: boolean = false;
   userRole: string = "";
+  userRoles = Role;
   assignableUsers: UserData[] = [];
   deleteTaskSubscription = new Subscription();
   updateTaskSubscription = new Subscription();
@@ -87,7 +88,7 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     private router: Router, 
     private route: ActivatedRoute, 
     private taskService: TaskService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
   
   ngOnDestroy(): void {
