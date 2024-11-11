@@ -101,13 +101,13 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     // Set task to be editable if logged in user has the admin role
     let loggedInUser : UserData | null = this.authService.currentUserSubject.getValue();
     if(loggedInUser) {
-      if(loggedInUser.roles.includes(Role.admin)) {
+      if(loggedInUser.roles.includes(Role.ADMIN)) {
         this.editable = true;
-        this.userRole = Role.admin
+        this.userRole = Role.ADMIN
       }
-      else if(loggedInUser.roles.includes(Role.manager)) {
+      else if(loggedInUser.roles.includes(Role.MANAGER)) {
         this.editable = true;
-        this.userRole = Role.manager;
+        this.userRole = Role.MANAGER;
       }
     }
 

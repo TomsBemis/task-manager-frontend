@@ -12,7 +12,7 @@ import { Role, User } from '../users/user.model';
 
 export const appRoutes: Routes = [
     { path: '', pathMatch: 'full', redirectTo: 'tasks'},
-    { path: 'tasks/create', component: CreateTaskComponent , canActivate: [authGuard, userRoleGuard([Role.admin],true)]},
+    { path: 'tasks/create', component: CreateTaskComponent , canActivate: [authGuard, userRoleGuard([Role.ADMIN],true)]},
     { path: 'tasks', component: TaskListComponent , canActivate: [authGuard]},
     { path: 'tasks/:id', component: TaskDetailsComponent , canActivate: [authGuard]},
 

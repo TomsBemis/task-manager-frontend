@@ -53,15 +53,15 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       // Check if logged in user is admin, or if not then compare ids
       let loggedInUser = this.authService.currentUserSubject.getValue();
       if(loggedInUser){
-        if(loggedInUser.roles.includes(Role.admin)) this.roleEditable = true;
+        if(loggedInUser.roles.includes(Role.ADMIN)) this.roleEditable = true;
         else if(loggedInUser?.id != responseUser.id) throw Error("Only users with administrator priviledges or users owners have access.")
       }
       
       // Set the initial values and attribtues of role checkboxes
       this.rolesCheckboxAttributes = new Map<string, RoleInput>([
-        [Role.user, {name: Role.user, checked: true, disabled: true}],
-        [Role.manager, {name: Role.manager, checked: this.user?.roles.includes(Role.manager), disabled: false}],
-        [Role.admin, {name: Role.admin, checked: this.user?.roles.includes(Role.admin), disabled: true}],
+        [Role.USER, {name: Role.USER, checked: true, disabled: true}],
+        [Role.MANAGER, {name: Role.MANAGER, checked: this.user?.roles.includes(Role.MANAGER), disabled: false}],
+        [Role.ADMIN, {name: Role.ADMIN, checked: this.user?.roles.includes(Role.ADMIN), disabled: true}],
       ]);
     });
   }

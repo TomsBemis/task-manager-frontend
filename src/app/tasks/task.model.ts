@@ -1,16 +1,16 @@
 import { UserData } from '../users/user.model';
 
 export enum TaskType {
-    subtask = "subtask",
-    story = "story",
-    task = "task"
+    SUBTASK = "subtask",
+    STORY = "story",
+    TASK = "task"
 }
 
 export enum TaskStatus {
-    fixInDev = "fixInDev",
-    obsolete = "obsolete",
-    inProgress = "inProgress",
-    done = "done"
+    FIX_IN_DEV = "fixInDev",
+    OBSOLETE = "obsolete",
+    IN_PROGRESS = "inProgress",
+    DONE = "done"
 }
 
 export interface Task {
