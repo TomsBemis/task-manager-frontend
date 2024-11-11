@@ -6,7 +6,7 @@
                     <div class="col-3">
                         <div class="row">
                             <div class="col">
-                                <h4 class="list-group-item-heading text-nowrap">{{ task.title }} ({{ ('task.type.'+task.type.value | translate) }})</h4>
+                                <h4 class="list-group-item-heading text-nowrap">{{ task.title }} ({{ ('task.type.'+task.type | translate) }})</h4>
                             </div>
                             @if (editable) {
                                 <div class="col">
@@ -21,9 +21,9 @@
                         </div>
                     </div>
                     <div class="col-11">
-                        <p class="list-group-item-text"><span class="badge bg-primary">{{ ('task.status.'+task.status.value | translate) }}</span> {{ task.description }}</p>
+                        <p class="list-group-item-text"><span class="badge bg-primary">{{ ('task.status.'+task.status | translate) }}</span> {{ task.description }}</p>
                     </div>
-                    @if (userRole === "Admin") {
+                    @if (userRole === userRoles.admin) {
                         <div class="col-1">
                             <button class="btn btn-danger" 
                             (click)="this.task !== null && this.task.id !== null ? onDeleted(this.task.id) : true">{{ ('task.deleteTask' | translate) }}</button>
@@ -45,7 +45,7 @@
                 @if (editable && this.editMode) {
                     <div class="row">
                         <div class="col-xs-6">
-                            @if (userRole === "Admin") {
+                            @if (userRole === userRoles.admin) {
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label" for="title">{{ ('task.title' | translate) }}</label>
                                     <div class="col-sm-10">
@@ -70,9 +70,10 @@
                                     <label class="col-sm-2 col-form-label" for="type">{{ ('task.taskType' | translate) }}</label>
                                     <div class="col-sm-10">
                                         <select class="form-control form-select" name="type" id="type" formControlName="type">
-                                            @for (taskType of taskTypes; track taskType) {
-                                                <option 
-                                                [value]="taskType.value">{{ ('task.type.'+taskType.value | translate) }}</option>
+                                            @for (taskType of taskTypes; track $index) {
+                                                <option [ngValue]="taskType">
+                                                    {{ ('task.type.'+taskType | translate) }}
+                                                </option>
                                             }
                                         </select>
                                         @if (!editTaskForm.get('type')?.valid && editTaskForm.get('type')?.touched) {
@@ -84,9 +85,10 @@
                                     <label class="col-sm-2 col-form-label" for="status">{{ ('task.taskStatus' | translate) }}</label>
                                     <div class="col-sm-10">
                                         <select class="form-control form-select" name="status" id="status" formControlName="status">
-                                            @for (taskStatus of taskStatuses; track taskStatus) {
-                                                <option
-                                                [value]="taskStatus.value">{{ ('task.status.'+taskStatus.value | translate) }}</option>
+                                            @for (taskStatus of taskStatuses; track $index) {
+                                                <option [ngValue]="taskStatus">
+                                                    {{ ('task.status.'+taskStatus | translate) }}
+                                                </option>
                                             }
                                         </select>
                                         @if (!editTaskForm.get('status')?.valid && editTaskForm.get('status')?.touched) {
@@ -95,7 +97,7 @@
                                     </div>
                                 </div>
                             }
-                            @if (userRole === "Manager") {
+                            @if (userRole === userRoles.manager) {
                                 <div class="form-group row">
                                     <label class="col-sm-2 col-form-label" for="assignedUser">{{ ('task.assignedUser' | translate) }}</label>
                                     <div class="col-sm-10">

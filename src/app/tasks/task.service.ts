@@ -1,5 +1,4 @@
-import { Task, BasicTask, TaskData } from "./task.model";
-import { Option } from "../shared/option.model";
+import { Task, BasicTask } from "./task.model";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { beApiRoutes } from "../routes/be-api.routes";
@@ -9,23 +8,10 @@ import { UserData } from "../users/user.model";
 @Injectable({ providedIn: "root" })
 export class TaskService{
     
-    private taskTypes : Option[] = [];
-    private taskStatuses : Option[] = [];
     public basicTasksSubject = new BehaviorSubject<BasicTask[]>([]);
     public basicTasks$ = this.basicTasksSubject.asObservable();
 
     constructor(private httpClient: HttpClient) {}
-
-    public getEssentialData() : Observable<TaskData> {
-        // Get task types, task statuses and tasks from DB
-        return this.httpClient.get<TaskData>(beApiRoutes.essentialTaskData).pipe(
-            first(),
-            tap(essentialData => {
-                this.taskStatuses = essentialData.taskStatuses;
-                this.taskTypes = essentialData.taskTypes;
-                this.basicTasksSubject.next(essentialData.tasks);
-            }));
-    }
 
     public getTasks() : Observable<BasicTask[]> {
         return this.httpClient.get<BasicTask[]>(beApiRoutes.tasks).pipe(
@@ -75,13 +61,5 @@ public updateTask(taskId: number, editedTask: Task) : Observable<Task | null>{
 
     public deleteTask(taskId: number) : Observable<BasicTask[]> {
         return this.httpClient.delete<BasicTask[]>(beApiRoutes.tasks + "/" + taskId);
-    }
-
-    public getTaskTypes() {
-        return this.taskTypes;
-    }
-
-    public getTaskStatuses() {
-        return this.taskStatuses;
     }
 }

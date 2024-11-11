@@ -1,13 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { initialRoles, User, UserRole } from '../user.model';
+import { Role, User, UserRole } from '../user.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { FormsModule }   from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { map, Subscription, switchMap, take } from 'rxjs';
-import { Option } from '../../shared/option.model';
 import { AuthService } from '../../auth/auth.service';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-user-details',
@@ -20,14 +19,13 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './user-details.component.html',
   styleUrl: './user-details.component.scss'
 })
+
 export class UserDetailsComponent implements OnInit, OnDestroy {
+  
 
   user: User | null = null;
-  allRoles: Option[] = [];
-  rolesCheckboxAttributes: {[key: string]: {
-    checked: boolean,
-    disabled: boolean
-  }} = {};
+  roles: string[] = Object.keys(Role);
+  rolesCheckboxAttributes: Map<string, RoleInput> = new Map<string, RoleInput>();
   roleEditable: boolean = false;
   editMode: boolean = false;
   updateUserSubscription = new Subscription();
@@ -36,7 +34,8 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute, 
     private userService: UserService, 
     private router: Router, 
-    private authService: AuthService
+    private authService: AuthService,
+    private translateService: TranslateService
   ) {}
   
   ngOnInit(): void {
@@ -54,27 +53,17 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       // Check if logged in user is admin, or if not then compare ids
       let loggedInUser = this.authService.currentUserSubject.getValue();
       if(loggedInUser){
-        if(loggedInUser.roles.includes("ADMIN")) this.roleEditable = true;
+        if(loggedInUser.roles.includes(Role.ADMIN)) this.roleEditable = true;
         else if(loggedInUser?.id != responseUser.id) throw Error("Only users with administrator priviledges or users owners have access.")
       }
       
-      this.rolesCheckboxAttributes = {
-        'USER': {
-          checked: true,
-          disabled: true 
-        },
-        'MANAGER': {
-          checked: this.user?.roles.includes("MANAGER"),
-          disabled: false 
-        },
-        'ADMIN': {
-          checked: this.user?.roles.includes("ADMIN"),
-          disabled: true
-        }
-      }
+      // Set the initial values and attribtues of role checkboxes
+      this.rolesCheckboxAttributes = new Map<string, RoleInput>([
+        [Role.USER, {name: Role.USER, checked: true, disabled: true}],
+        [Role.MANAGER, {name: Role.MANAGER, checked: this.user?.roles.includes(Role.MANAGER), disabled: false}],
+        [Role.ADMIN, {name: Role.ADMIN, checked: this.user?.roles.includes(Role.ADMIN), disabled: true}],
+      ]);
     });
-    
-    for (let key in initialRoles) this.allRoles.push(initialRoles[key]);
   }
   
   ngOnDestroy(): void {
@@ -90,10 +79,10 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     // Get filled out form data using form group
     let selectedRoles: UserRole[] = [];
     
-    this.allRoles.forEach(roleItem => {
+    this.roles.forEach(roleItem => {
       selectedRoles.push({
         role: roleItem,
-        enabled: this.rolesCheckboxAttributes[roleItem.value].checked
+        enabled: this.rolesCheckboxAttributes.get(roleItem)?.checked ?? false
       });
     });
 
@@ -111,15 +100,23 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   }
 
   onRoleChange(event: any, role: string) {
-    this.rolesCheckboxAttributes[role].checked = event.target.checked;
+    let roleInputByName: RoleInput | undefined = this.rolesCheckboxAttributes.get(role); 
+    if(roleInputByName) {
+      roleInputByName.checked = event.target.checked;
+      this.rolesCheckboxAttributes.set(role, roleInputByName);
+    }
   }
+  
+  getUserRoleNames(): string {
+    if(!this.user) return "";
+    return this.user.roles.map(
+      (role) => this.translateService.instant('user.role.'+role)
+    ).join(", ");
+  }
+}
 
-  getUserRoleNames(): string[]{
-    if(!this.user) return [];
-    return this.user.roles.map((userRole: string) => {
-      let foundRole = this.allRoles.find(role => role.value == userRole);
-      if(!foundRole) return "";
-      return foundRole.displayName;
-    })
-  }
+interface RoleInput {
+  name: string,
+  checked: boolean,
+  disabled: boolean
 }
