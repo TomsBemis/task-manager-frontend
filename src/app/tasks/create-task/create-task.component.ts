@@ -1,11 +1,14 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TaskService } from '../task.service';
 import { KeyValuePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { TaskStatus, TaskType } from '../task.model';
+import { AppState } from '../../state/app.state';
+import { Store } from '@ngrx/store';
+import { addTask, TasksActionTypes } from '../../state/tasks/tasks.actions';
+import { isTitleUnique } from '../../state/tasks/tasks.selectors';
 
 @Component({
   selector: 'app-create-task',
@@ -35,7 +38,7 @@ export class CreateTaskComponent implements OnDestroy {
     status: new FormControl(null, Validators.required)
   });
 
-  constructor(private taskService: TaskService, private router: Router) {}
+  constructor(private router: Router, private store: Store<AppState>) {}
   
   ngOnDestroy(): void {
     this.addTaskSubscription.unsubscribe();
@@ -44,28 +47,24 @@ export class CreateTaskComponent implements OnDestroy {
   onSubmit () {
     // Get filled out form data using form group
     
-    this.addTaskSubscription = this.taskService.addTask({
-      id: 0,
-      title: this.createTaskForm.get('title')?.value,
-      description: this.createTaskForm.get('description')?.value,
-      type: this.createTaskForm.get('type')?.value,
-      status: this.createTaskForm.get('status')?.value,
-      updatedAt: new Date(),
-      createdAt: new Date(),
-      assignedUser: null
-    }).subscribe(createdTask => {
-      if(createdTask) this.router.navigate(['/tasks', createdTask.id]);
-    });
+    this.store.dispatch(addTask({
+      task: {
+        id: 0,
+        title: this.createTaskForm.get('title')?.value,
+        description: this.createTaskForm.get('description')?.value,
+        type: this.createTaskForm.get('type')?.value,
+        status: this.createTaskForm.get('status')?.value,
+        updatedAt: new Date(),
+        createdAt: new Date(),
+        assignedUser: null
+      }
+    }));
   }
 
   validateTitleUnique(control: FormControl): {[s: string]: boolean} | null {
-    if (this.taskService
-      .basicTasksSubject.getValue()
-      .flatMap(
-        (task: { title: string; }) => {return task.title}
-      ).indexOf(control.value) !== -1) {
-        return {'titleUnique': true};
-    }
+    this.store.select(isTitleUnique(control.value)).subscribe(unique => {
+      return {'titleUnique': unique};
+    });
     return null;
   }
 }

@@ -1,17 +1,17 @@
 import { Action, ActionReducer } from "@ngrx/store";
-import { taskReducer, TaskState } from "./tasks/task.reducers";
-import { TaskEffects } from "./tasks/task.effects";
+import { tasksReducer, TasksState } from "./tasks/tasks.reducers";
+import { TasksEffects } from "./tasks/tasks.effects";
 
 export interface AppState {
-    tasks: TaskState;
+    tasks: TasksState;
 }
 
 export interface AppStore {
-    todo: ActionReducer<TaskState, Action>;
+    todo: ActionReducer<TasksState, Action>;
   }
   
   export const appStore: AppStore = {
-    todo: taskReducer
+    todo: tasksReducer
   }
   
-  export const appEffects = [TaskEffects];
+  export const appEffects = [TasksEffects];
