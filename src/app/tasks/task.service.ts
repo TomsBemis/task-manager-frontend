@@ -43,7 +43,7 @@ export class TaskService{
         );
     }
 
-public updateTask(taskId: number, editedTask: Task) : Observable<Task | null>{
+    public updateTask(taskId: number, editedTask: Task) : Observable<Task | null>{
         // Update the task if the ids match
         return this.httpClient.patch<Task | null>(beApiRoutes.tasks + "/" + taskId, editedTask)
         .pipe(

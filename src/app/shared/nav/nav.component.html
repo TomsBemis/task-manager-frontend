@@ -10,7 +10,7 @@
               <li class="nav-item">
                 <a class="nav-link text-nowrap" routerLink="/tasks">{{ 'task.list' | translate }}</a>
               </li>
-              @if(currentUser.roles.includes(userRoles.admin)) {   
+              @if(currentUser.roles.includes(userRoles.ADMIN)) {   
                 <div class="vr"></div>
                 <li class="nav-item">
                   <a class="nav-link text-nowrap" routerLink="/tasks/create">{{ 'task.createTask' | translate }}</a>

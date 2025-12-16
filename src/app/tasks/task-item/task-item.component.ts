@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { BasicTask } from '../task.model';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, JsonPipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { Role } from '../../users/user.model';
+import { TaskType } from '../task.model';
 
 @Component({
   selector: 'app-task-item',
@@ -19,6 +20,7 @@ import { Role } from '../../users/user.model';
 })
 export class TaskItemComponent {
 
+  protected readonly TaskType = TaskType;
   userRoles = Role;
   currentUser = this.authService.currentUserSubject;
   currentUser$ = this.authService.currentUserSubject.asObservable();
